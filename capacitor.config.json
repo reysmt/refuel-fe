@@ -1,0 +1,13 @@
+{
+  "appId": "com.les.projects",
+  "appName": "refuel-app",
+  "webDir": "dist",
+  "server" : {
+    "androidScheme" : "http",
+    "cleartext" : true
+  },
+  "android" : {
+    "allowMixedContent" : true
+  }
+  
+}
