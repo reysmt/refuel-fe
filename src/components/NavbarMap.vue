@@ -6,7 +6,7 @@
   </Dock>
 
   <NavbarMapList :isVisible="displayList" :gmapKey="gmapKey" @updatedVisibility="updatedVisibility" class="navbarmap-list"></NavbarMapList>
-  <NavbarMapFilter :isVisible="displayFilter"></NavbarMapFilter>
+  <NavbarMapFilter :isVisible="displayFilter" ></NavbarMapFilter>
 </template>
 <script setup>
 import Dock from 'primevue/dock';

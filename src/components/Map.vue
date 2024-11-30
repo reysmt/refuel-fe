@@ -63,6 +63,11 @@ export default {
     this.setZoomAndPosition();
     this.dragMap();
     this.postRenderMap()
+
+    this.rigsTypeStore.$subscribe(() => {
+      this.removeOverlays();
+      this.recalculateRigs();
+    })
   },
   updated(){
     
@@ -141,6 +146,7 @@ export default {
           }
         }
       }
+      console.log(this.rigsTypeStore.getType())
       if(this.rigsTypeStore.type != null){
         this.rigsToShowStore.setRigs(this.rigsToShowStore.getRigs().filter((rig) => rig.rigPrices.some((rigPrice) => rigPrice.rigFuelType.rigFuelTypeDescription == this.rigsTypeStore.getType())))
       }else{
@@ -149,8 +155,8 @@ export default {
       // console.log(this.rigsToShowStore.getRigs())
     },
     setupOverlays(map) {
-      let extent = map.getView().calculateExtent(map.getSize());
-      // console.log(extent)
+      let extent = map.getView().calculateExtent(map.getSize().map( i => i+500));
+      // console.log(map.getSize())
       if (this.$refs.buttons != null) {
         for (let button of this.$refs.buttons) {
           let position = { coordinate: [button.longitude, button.latitude] };
@@ -190,6 +196,13 @@ export default {
     },
     getIsMapLoaded(){
       return this.isMapLoaded;
+    },
+    removeOverlays(){
+      for(let overlay of this.mapStore.getMap().getOverlays().getArray().slice(0)){
+          if(overlay.get('isRig') != undefined){
+            this.mapStore.getMap().removeOverlay(overlay)
+          }
+        }
     }
   }
 }
