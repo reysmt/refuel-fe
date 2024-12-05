@@ -155,7 +155,7 @@ export default {
       // console.log(this.rigsToShowStore.getRigs())
     },
     setupOverlays(map) {
-      let extent = map.getView().calculateExtent(map.getSize().map( i => i+500));
+      let extent = map.getView().calculateExtent(map.getSize().map( i => i+50));
       // console.log(map.getSize())
       if (this.$refs.buttons != null) {
         for (let button of this.$refs.buttons) {

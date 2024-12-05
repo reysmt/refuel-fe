@@ -9,7 +9,7 @@
     <!-- <button type="button" class="btn btn-secondary btn-sm rounded" ref="popup">
         <i class="bi bi-fuel-pump"></i>
     </button> -->
-    <div ref="popup">
+    <div ref="popup" class="popup">
         <div v-if="rigsTypeStore.getType() == null || rigsTypeStore.getType().toLowerCase() != 'Gasolio'.toLowerCase()">
             <ButtonPv icon="bi bi-fuel-pump-fill" label=" " :badge="setAndGetPriceToShow() + '€'" @click="openDetails()" class="custom-btn-rig-map"></ButtonPv>
         </div>

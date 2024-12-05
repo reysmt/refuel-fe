@@ -1,7 +1,7 @@
 <template>
   <Dock :model="items" class="p-dock-list-container-custom p-dock-list-custom">
     <template #icon="{ item }">
-      <i :class="item.class" style="font-size: 1rem; color: grey" @click="onDockItemClick($event, item)"></i>
+      <i :class="item.class" style="margin: 30px;  color: grey" @click="onDockItemClick($event, item)"></i>
     </template>
   </Dock>
 

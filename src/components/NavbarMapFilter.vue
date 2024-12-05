@@ -1,5 +1,5 @@
 <template>
-<Dialog v-model:visible="isFilterVisible" header="Filtra" :style="{ width: '25rem' }" position="right" :modal="true" :draggable="false">
+<Dialog v-model:visible="isFilterVisible" header="Filtra" :style="{ width: '25rem' }" position="right" :modal="false" :draggable="false">
     <div v-if="allRigsTypeStore.getAllRigsType().length > 0">
         <Listbox v-model="rigType" :options="allRigsTypeStore.getAllRigsType()"  class="" />
     </div>
@@ -27,7 +27,7 @@ export default {
     },
     props: ["isVisible"],
     mounted(){
-        console.log(this.allRigsTypeStore.getAllRigsType())
+        // console.log(this.allRigsTypeStore.getAllRigsType())
     },
     watch: {
         isVisible(newVal){
