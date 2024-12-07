@@ -1,7 +1,7 @@
 <template>
     <Sidebar v-model:visible="isListVisible" header="Stazioni" position="full">
         <div v-if="rigsStore.getLength() > 0">
-            <DataTable :value="rigsStore.getRigs()" tableStyle="" style="min-width: auto; max-width: 100%;" lazy stripedRows >
+            <DataTable :value="rigsStore.getRigs()" tableStyle="" style="min-width: auto; max-width: 100%;" stripedRows >
                 <Column field="rig.flag" header="Bandiera" style="padding: .5rem; text-align: center;"></Column>
                 <Column field="rig.province" header="Località" style="padding: .5rem; text-align: center;"></Column>
                 <Column field="" header="">
