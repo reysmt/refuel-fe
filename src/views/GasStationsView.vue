@@ -80,22 +80,22 @@ export default {
     this.getGeoFromBrowser();
   },
   watch:{
-    selectedRigType: function(val){
-      if(val){
-        for(let overlay of this.mapStore.getMap().getOverlays().getArray().slice(0)){
-          if(overlay.get('isRig') != undefined){
-            this.mapStore.getMap().removeOverlay(overlay)
-          }
-        }
-        console.log(this.mapStore.getMap().getOverlays())
-        // this.mapStore.getMap().getOverlays().clear();
-        this.rigsTypeStore.setType(val);
-        // console.log(this.rigsTypeStore.getType())
-        this.rigsToShowStore.setRigs(this.rigsStore.getRigs().filter((rig) => rig.rigPrices.some((rigPrices) => rigPrices.rigFuelType.rigFuelTypeDescription == this.rigsTypeStore.getType())))
-        // console.log(this.rigsToShowStore.getRigs())
-        this.swiperKey += 1
-      }
-    }
+    // selectedRigType: function(val){
+    //   if(val){
+    //     for(let overlay of this.mapStore.getMap().getOverlays().getArray().slice(0)){
+    //       if(overlay.get('isRig') != undefined){
+    //         this.mapStore.getMap().removeOverlay(overlay)
+    //       }
+    //     }
+    //     console.log(this.mapStore.getMap().getOverlays())
+    //     // this.mapStore.getMap().getOverlays().clear();
+    //     this.rigsTypeStore.setType(val);
+    //     // console.log(this.rigsTypeStore.getType())
+    //     this.rigsToShowStore.setRigs(this.rigsStore.getRigs().filter((rig) => rig.rigPrices.some((rigPrices) => rigPrices.rigFuelType.rigFuelTypeDescription == this.rigsTypeStore.getType())))
+    //     // console.log(this.rigsToShowStore.getRigs())
+    //     this.swiperKey += 1
+    //   }
+    // }
   },
   methods: {
     getGeoFromBrowser(){

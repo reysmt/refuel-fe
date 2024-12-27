@@ -66,7 +66,8 @@ export const useAllRigsTypeStore = defineStore('allType', {
       return this.allTypes;
     },
     addAllRigsType(type){
-      this.allTypes.push(type);
+      // this.allTypes.push(type);
+      this.allTypes.findIndex(item => item.toLowerCase() === type.toLowerCase()) === -1 ? this.allTypes.push(type) : null
     }
   }
 })

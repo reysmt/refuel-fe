@@ -1,15 +1,16 @@
 <template>
-  <Dock :model="items" class="p-dock-list-container-custom p-dock-list-custom">
-    <template #icon="{ item }">
-      <i :class="item.class" style="margin: 30px;  color: grey" @click="onDockItemClick($event, item)"></i>
-    </template>
-  </Dock>
+  <div class="navigation-card">
+    <a href="#" class="tab" v-for="item in items" v-bind:key="item.label">
+      <i :class="item.class" style="font-size: 1rem" @click="onDockItemClick($event, item)"></i>
+    </a>
+  </div>
 
-  <NavbarMapList :isVisible="displayList" :gmapKey="gmapKey" @updatedVisibility="updatedVisibility" class="navbarmap-list"></NavbarMapList>
-  <NavbarMapFilter :isVisible="displayFilter" ></NavbarMapFilter>
+  <NavbarMapList :isVisible="displayList" :gmapKey="gmapKey" @updatedVisibility="updatedVisibility"
+    class="navbarmap-list"></NavbarMapList>
+  <NavbarMapFilter :isVisible="displayFilter"></NavbarMapFilter>
 </template>
 <script setup>
-import Dock from 'primevue/dock';
+// import Dock from 'primevue/dock';
 import { ref } from 'vue';
 import NavbarMapList from './NavbarMapList.vue';
 import NavbarMapFilter from './NavbarMapFilter.vue';
@@ -32,7 +33,8 @@ export default {
           label: 'List',
           class: 'pi pi-bars',
           command: () => {
-            this.displayList = !this.displayList;
+            this.displayList = !this.displayList
+            console.log(this.displayList);
           }
         },
         {
@@ -61,6 +63,7 @@ export default {
     },
     updatedVisibility(newVal){
       this.displayList = newVal
+      console.log(newVal)
     }
   }
 }

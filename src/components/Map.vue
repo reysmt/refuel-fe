@@ -131,9 +131,9 @@ export default {
       this.mapStore.getMap().on('moveend', this.reloadOverlaysRigs);
     },
     async recalculateRigs(){
-      let distanceThreshold = 0.01;
+      let distanceThreshold = 1;
       if(this.rigsStore.getRigs().length <= 0){
-        distanceThreshold = 0.04;
+        distanceThreshold = 10;
       }
       this.localRigs = await getNearbyRigs(this.mapStore.getMap().getView().getCenter()[1], this.mapStore.getMap().getView().getCenter()[0], distanceThreshold, this.authWs.token)
       // console.log(this.localRigs)
@@ -148,7 +148,7 @@ export default {
       }
       console.log(this.rigsTypeStore.getType())
       if(this.rigsTypeStore.type != null){
-        this.rigsToShowStore.setRigs(this.rigsToShowStore.getRigs().filter((rig) => rig.rigPrices.some((rigPrice) => rigPrice.rigFuelType.rigFuelTypeDescription == this.rigsTypeStore.getType())))
+        this.rigsToShowStore.setRigs(this.rigsToShowStore.getRigs().filter((rig) => rig.rigPrices.some((rigPrice) => rigPrice.rigFuelType.rigFuelTypeDescription.toLowerCase() == this.rigsTypeStore.getType().toLowerCase())))
       }else{
         this.rigsToShowStore.setRigs(this.rigsStore.getRigs())
       }
