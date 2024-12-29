@@ -7,7 +7,7 @@
 
   <NavbarMapList :isVisible="displayList" :gmapKey="gmapKey" @updatedVisibility="updatedVisibility"
     class="navbarmap-list"></NavbarMapList>
-  <NavbarMapFilter :isVisible="displayFilter"></NavbarMapFilter>
+  <NavbarMapFilter :isVisible="displayFilter" @updatedVisibility="updatedVisibilityFilter"></NavbarMapFilter>
 </template>
 <script setup>
 // import Dock from 'primevue/dock';
@@ -48,7 +48,7 @@ export default {
           label: "Filter",
           class: "pi pi-filter",
           command: () => {
-            this.displayFilter = !this.displayFilter;
+            this.displayFilter = true;
           }
         }
     ])
@@ -63,7 +63,11 @@ export default {
     },
     updatedVisibility(newVal){
       this.displayList = newVal
-      console.log(newVal)
+      // console.log(newVal)
+    },
+    updatedVisibilityFilter(newVal){
+      this.displayFilter = newVal
+      // console.log(newVal)
     }
   }
 }

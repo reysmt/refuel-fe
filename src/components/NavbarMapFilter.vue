@@ -32,11 +32,17 @@ export default {
     watch: {
         isVisible(newVal){
             this.isFilterVisible = newVal;
+            // console.log(newVal)
+        },
+        isFilterVisible(newVal){
+            this.$emit('updatedVisibility', newVal);
+            this.isFilterVisible = newVal;
+            // console.log(this.isFilterVisible)
         },
         rigType(newVal){
             this.rigTypeStore.setType(newVal);
         }
-    }
-
+    },
+    emits: ["updatedVisibility"]
 }
 </script>

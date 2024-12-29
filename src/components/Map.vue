@@ -81,6 +81,9 @@ export default {
       this.authWs = await authenticate('refuel','refuelistheway')
       // console.log(this.authWs.token)
     },
+    clusterizedOverlays(){
+      
+    },
     reloadOverlaysRigs(){
       this.recalculateRigs();
       // this.loadViewableOverlays(this.mapStore.getMap());
@@ -146,7 +149,7 @@ export default {
           }
         }
       }
-      console.log(this.rigsTypeStore.getType())
+      // console.log(this.rigsTypeStore.getType())
       if(this.rigsTypeStore.type != null){
         this.rigsToShowStore.setRigs(this.rigsToShowStore.getRigs().filter((rig) => rig.rigPrices.some((rigPrice) => rigPrice.rigFuelType.rigFuelTypeDescription.toLowerCase() == this.rigsTypeStore.getType().toLowerCase())))
       }else{

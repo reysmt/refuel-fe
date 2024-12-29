@@ -5,7 +5,6 @@ import View from 'ol/View.js';
 // import OSM from 'ol/source/OSM.js';
 import { useGeographic } from 'ol/proj.js';
 import { XYZ } from 'ol/source';
-import googleMapService from '@/services/googleMapService';
 
 export const useMapStore = defineStore('map', {
     state: () => {
