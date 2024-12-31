@@ -70,7 +70,7 @@ export default {
   updated(){
     if(this.rigsToShowStore != null && this.rigsToShowStore.getLength() > 0){
       if(mapContainer.value!=null && mapContainer.value.getIsMapLoaded() && mapContainer.value.getButtons()){
-        mapContainer.value.setupOverlays(this.mapStore.getMap());
+        // mapContainer.value.setupOverlays(this.mapStore.getMap());
         this.gmapKey = mapContainer.value.getGmap().key;
       }
     }

@@ -1,13 +1,12 @@
 <template>
-  <div id="map" class="map-container border rounded-4" ref="map"></div>
-  <img src="../../google_logo/google_logo/android/res/drawable-mdpi/google_on_non_white.png" class="google-logo"/>
-  <YourPosition v-if="mapStore.getMap()!=null && isMapLoaded"
-    :popupContent="'blank'" 
-    :latitude="latitude"
-    :longitude="longitude" 
-    :mapObj="mapStore.getMap()" 
-    :key="1" ref="position"/>
-  <div v-if="mapStore.getMap()!=null && isMapLoaded && rigsToShowStore.getLength() > 0">
+  <div id="map" class="map-container border rounded-4" ref="map">
+    <div ref="popup" class="popup"></div>
+  </div>
+  <img src="../../google_logo/google_logo/android/res/drawable-mdpi/google_on_non_white.png" class="google-logo" />
+  <YourPosition v-if="mapStore.getMap()!=null && isMapLoaded" :popupContent="'blank'" :latitude="latitude"
+    :longitude="longitude" :mapObj="mapStore.getMap()" :key="1" ref="position" />
+    
+  <!-- <div v-if="mapStore.getMap()!=null && isMapLoaded && rigsToShowStore.getLength() > 0">
     <ButtonRig v-for="rig in rigsToShowStore.getRigs()"
     :rig="rig.rig"
     :rigPrices="rig.rigPrices"
@@ -18,7 +17,7 @@
     :key="rig.rig.rigId"
     :gmapKey="this.gmapSession.key"
     ref="buttons"/>
-  </div>
+  </div> -->
 </template>
 <script setup>
 </script>
@@ -31,10 +30,23 @@ import { useRigsStore, useRigsToShowStore, useAllRigsTypeStore, useRigsTypeStore
 // import { useMapStore } from '@/stores/customMap';
 import { useMapStore } from '@/stores/googleMap.js';
 import Overlay from 'ol/Overlay.js';
-import { defineAsyncComponent, ref } from 'vue';
+import {ref } from 'vue';
 import {containsCoordinate} from 'ol/extent';
 import googleMapService from '@/services/googleMapService';
 import ButtonRig from './ButtonRig.vue';
+
+import Feature from 'ol/Feature.js';
+import {Cluster, Vector as VectorSource} from 'ol/source.js';
+import {Vector as VectorLayer} from 'ol/layer.js';
+import Point from 'ol/geom/Point.js';
+import {
+  Circle as CircleStyle,
+  Fill,
+  Stroke,
+  Style,
+  Text,
+} from 'ol/style.js';
+import {boundingExtent} from 'ol/extent.js';
 let buttons = ref([])
 let position =ref()
 export default {
@@ -63,7 +75,6 @@ export default {
     this.setZoomAndPosition();
     this.dragMap();
     this.postRenderMap()
-
     this.rigsTypeStore.$subscribe(() => {
       this.removeOverlays();
       this.recalculateRigs();
@@ -81,13 +92,108 @@ export default {
       this.authWs = await authenticate('refuel','refuelistheway')
       // console.log(this.authWs.token)
     },
-    clusterizedOverlays(){
+    async clusterizedOverlays(){
+
+      const features = [];
+      for (let i = 0; i < this.rigsToShowStore.getRigs().length; ++i) {
+        let rig = this.rigsToShowStore.getRigs()[i];
+        const coordinates = [rig.rig.longitude, rig.rig.latitude];
+        features[i] = new Feature(new Point(coordinates));
+        features[i].set('rig', rig);
+        // console.log(features[i].values_.rig.rig)
+      }
+
+      const source = new VectorSource({
+        features: features,
+      });
+
+      const clusterSource = new Cluster({
+        distance: 25,
+        source: source,
+      });
+
+      const styleCache = {};
+
+      const clusters = new VectorLayer({
+        source: clusterSource,
+        style: function (feature) {
+          const size = feature.get('features').length;
+          let style = styleCache[size];
+          if (!style) {
+            style = new Style({
+              image: new CircleStyle({
+                radius: 15,
+                // stroke: new Stroke({
+                //   color: '#fff',
+                // }),
+                fill: new Fill({
+                  color: '#3399CC',
+                }),
+              }),
+              text: new Text({
+                text: size.toString(),
+                fill: new Fill({
+                  color: '#fff',
+                }),
+              }),
+            });
+            styleCache[size] = style;
+          }
+          return style;
+        },
+      });
+
+      let element = this.$refs.popup;
+
+      const popup = new Overlay({
+        element: element,
+        positioning: 'bottom-center',
+        stopEvent: false,
+      });
+      this.mapStore.getMap().addOverlay(popup);
       
+      let popover;
+      function disposePopover() {
+        if (popover) {
+          popover.dispose();
+          popover = undefined;
+        }
+      }
+
+      this.mapStore.getMap().addLayer(clusters);
+
+      this.mapStore.getMap().on('singleclick', (e) => {
+        // console.log(e);
+        console.log(clusters.getFeatures(e.pixel))
+        // .then((clickedFeatures) => {
+        //   console.log(clickedFeatures.length)
+        //   if (clickedFeatures.length) {
+        //     // Get clustered Coordinates
+        //     const features = clickedFeatures[0].get('features');
+        //     disposePopover();
+        //     if(!features){
+        //         return
+        //       }
+            
+        //     popup.setPosition(e.coordinate);
+        //     popover = new bootstrap.Popover(element, {
+        //       placement: 'top',
+        //       html: true,
+        //       content: features.map((r) => r.get('rig').rig.rigName).join('<br>'),
+        //     });
+        //     popover.show();
+        //   }
+        // });
+        this.mapStore.getMap().on('movestart', disposePopover);
+
+      });
+
     },
-    reloadOverlaysRigs(){
-      this.recalculateRigs();
+    async reloadOverlaysRigs(){
+      await this.recalculateRigs();
+      await this.clusterizedOverlays();
       // this.loadViewableOverlays(this.mapStore.getMap());
-      this.setupOverlays(this.mapStore.getMap());
+      // this.setupOverlays(this.mapStore.getMap());
     },
     loadViewableOverlays(map){
       let extent = map.getView().calculateExtent(map.getSize());
