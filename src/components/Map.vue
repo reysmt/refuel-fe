@@ -1,11 +1,17 @@
 <template>
   <div id="map" class="map-container border rounded-4" ref="map">
-    <div ref="popup" class="popup"></div>
+    <!-- <div ref="popup" class="popup"></div> -->
+     <div ref="popup"  id="popup" class="ol-popup" v-if="mapStore.getMap()!=null && isMapLoaded" >
+      <MapPopup />
+     </div>
+    
   </div>
-  <img src="../../google_logo/google_logo/android/res/drawable-mdpi/google_on_non_white.png" class="google-logo" />
+  <img src="../../google_logo/google_logo/android/res/drawable-mdpi/google_on_non_white.png" class="google-logo"
+    />
   <YourPosition v-if="mapStore.getMap()!=null && isMapLoaded" :popupContent="'blank'" :latitude="latitude"
     :longitude="longitude" :mapObj="mapStore.getMap()" :key="1" ref="position" />
-    
+
+
   <!-- <div v-if="mapStore.getMap()!=null && isMapLoaded && rigsToShowStore.getLength() > 0">
     <ButtonRig v-for="rig in rigsToShowStore.getRigs()"
     :rig="rig.rig"
@@ -15,14 +21,15 @@
     :longitude="rig.rig.longitude" 
     :mapObj="mapStore.getMap()" 
     :key="rig.rig.rigId"
-    :gmapKey="this.gmapSession.key"
+    :gmapKey="gmapSession.key"
     ref="buttons"/>
   </div> -->
 </template>
 <script setup>
+import YourPosition from './YourPosition.vue'
+// import MapPopup from './MapPopup.vue';
 </script>
 <script>
-import YourPosition from './YourPosition.vue'
 import proj4 from 'proj4';
 import { getNearbyRigs } from "../services/rigsService";
 import { authenticate} from '@/services/authService';
@@ -33,7 +40,7 @@ import Overlay from 'ol/Overlay.js';
 import {ref } from 'vue';
 import {containsCoordinate} from 'ol/extent';
 import googleMapService from '@/services/googleMapService';
-import ButtonRig from './ButtonRig.vue';
+// import ButtonRig from './ButtonRig.vue';
 
 import Feature from 'ol/Feature.js';
 import {Cluster, Vector as VectorSource} from 'ol/source.js';
@@ -42,19 +49,14 @@ import Point from 'ol/geom/Point.js';
 import {
   Circle as CircleStyle,
   Fill,
-  Stroke,
   Style,
   Text,
 } from 'ol/style.js';
-import {boundingExtent} from 'ol/extent.js';
-let buttons = ref([])
+import MapPopup from './MapPopup.vue';
+// let buttons = ref([])
 let position =ref()
 export default {
   name: "mapContainer",
-  components:{
-    YourPosition,
-    ButtonRig
-  },
   props: ['rigs','longitude','latitude'],
   data() {
     return {
@@ -65,7 +67,14 @@ export default {
       mapStore: useMapStore(),
       isMapLoaded: false,
       authWs: null,
-      gmapSession: null
+      gmapSession: null,
+      features: [],
+      vectorSource: null,
+      clusterSource: null,
+      clusters: null,
+      clickedFeature: null,
+      position: ref(),
+      overlay: null
     }
   },
   async mounted() {
@@ -75,15 +84,40 @@ export default {
     this.setZoomAndPosition();
     this.dragMap();
     this.postRenderMap()
+    this.singleClickEvent();
     this.rigsTypeStore.$subscribe(() => {
       this.removeOverlays();
       this.recalculateRigs();
-    })
+    });
   },
   updated(){
-    
   },
   methods: {
+    singleClickEvent(){
+      this.mapStore.getMap().on('singleclick', this.manageOverlay);
+      
+    },
+    manageOverlay(e){
+      this.clickedFeature = this.mapStore.getMap().forEachFeatureAtPixel(e.pixel, function (feature) {
+        return feature;
+      });
+        this.overlay = new Overlay({
+            element: this.$refs.popup,
+            autoPan: {
+                animation: {
+                    duration: 250,
+                },
+            },
+          });
+        if(this.clickedFeature){
+          console.log(this.clickedFeature.getGeometry().getCoordinates())
+          this.overlay.set("isPopup","true");
+          this.mapStore.getMap().addOverlay(this.overlay)
+          this.overlay.setPosition(this.clickedFeature.getGeometry().getCoordinates())
+        }else{
+          this.overlay.setPosition(undefined);
+        }
+    },
     async getGmapSession(token){
       this.gmapSession = await googleMapService.getLastValidSession(token);
       // console.log(this.gmapSession)
@@ -93,29 +127,28 @@ export default {
       // console.log(this.authWs.token)
     },
     async clusterizedOverlays(){
-
-      const features = [];
+      // console.log(this.rigsToShowStore.getRigs().length)
       for (let i = 0; i < this.rigsToShowStore.getRigs().length; ++i) {
         let rig = this.rigsToShowStore.getRigs()[i];
         const coordinates = [rig.rig.longitude, rig.rig.latitude];
-        features[i] = new Feature(new Point(coordinates));
-        features[i].set('rig', rig);
+        this.features[i] = new Feature(new Point(coordinates));
+        this.features[i].set('rig', rig);
         // console.log(features[i].values_.rig.rig)
       }
 
-      const source = new VectorSource({
-        features: features,
+      this.vectorSource = new VectorSource({
+        features: this.features,
       });
 
-      const clusterSource = new Cluster({
+      this.clusterSource = new Cluster({
         distance: 25,
-        source: source,
+        source: this.vectorSource,
       });
 
       const styleCache = {};
 
-      const clusters = new VectorLayer({
-        source: clusterSource,
+      this.clusters = new VectorLayer({
+        source: this.clusterSource,
         style: function (feature) {
           const size = feature.get('features').length;
           let style = styleCache[size];
@@ -142,80 +175,12 @@ export default {
           return style;
         },
       });
-
-      let element = this.$refs.popup;
-
-      const popup = new Overlay({
-        element: element,
-        positioning: 'bottom-center',
-        stopEvent: false,
-      });
-      this.mapStore.getMap().addOverlay(popup);
-      
-      let popover;
-      function disposePopover() {
-        if (popover) {
-          popover.dispose();
-          popover = undefined;
-        }
-      }
-
-      this.mapStore.getMap().addLayer(clusters);
-
-      this.mapStore.getMap().on('singleclick', (e) => {
-        // console.log(e);
-        console.log(clusters.getFeatures(e.pixel))
-        // .then((clickedFeatures) => {
-        //   console.log(clickedFeatures.length)
-        //   if (clickedFeatures.length) {
-        //     // Get clustered Coordinates
-        //     const features = clickedFeatures[0].get('features');
-        //     disposePopover();
-        //     if(!features){
-        //         return
-        //       }
-            
-        //     popup.setPosition(e.coordinate);
-        //     popover = new bootstrap.Popover(element, {
-        //       placement: 'top',
-        //       html: true,
-        //       content: features.map((r) => r.get('rig').rig.rigName).join('<br>'),
-        //     });
-        //     popover.show();
-        //   }
-        // });
-        this.mapStore.getMap().on('movestart', disposePopover);
-
-      });
-
+      this.mapStore.getMap().addLayer(this.clusters);
     },
     async reloadOverlaysRigs(){
       await this.recalculateRigs();
-      await this.clusterizedOverlays();
-      // this.loadViewableOverlays(this.mapStore.getMap());
       // this.setupOverlays(this.mapStore.getMap());
-    },
-    loadViewableOverlays(map){
-      let extent = map.getView().calculateExtent(map.getSize());
-      console.log(extent)
-
-      console.log('recheck')
-
-      let count = 0;
-
-      map.getOverlays()['array_'].forEach(overlay => {
-        count = count + 1;
-        this.overlays.add(overlay);
-        let coords = overlay['values_']['position']
-        if(containsCoordinate(extent, coords)){
-          console.log('inserted ' + map.addOverlay(overlay))
-          overlay.setPosition(coords)
-        }else{
-          console.log("removed " + map.removeOverlay(overlay))
-        }
-      });
-
-      console.log(count)
+      await this.clusterizedOverlays();
     },
     setZoomAndPosition(){
       this.mapStore.getMap().getView().setCenter([this.longitude, this.latitude]);
