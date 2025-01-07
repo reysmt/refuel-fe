@@ -44,7 +44,11 @@ export default {
     props: ['mapObj', 'popupContent', 'longitude', 'latitude','rig','rigPrices','gmapKey'],
     methods: {
         closePopup() {
-            this.mapStore.getMap().getOverlays().clear();
+            let overlays = this.mapStore.getMap().getOverlays().array_.filter((overlay) => overlay.values_.isPopup === "true")
+            for(let overlay of overlays){
+                this.mapStore.getMap().removeOverlay(overlay);
+                // console.log(this.mapStore.getMap().getOverlays().array_.filter((overlay) => overlay.values_.isPopup === "true"))
+            }
         }
     }
 }

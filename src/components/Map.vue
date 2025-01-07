@@ -1,7 +1,7 @@
 <template>
   <div id="map" class="map-container border rounded-4" ref="map">
     <!-- <div ref="popup" class="popup"></div> -->
-     <div ref="popup"  id="popup" class="ol-popup" v-if="mapStore.getMap()!=null && isMapLoaded" >
+     <div ref="popup"  id="popup" class="ol-popup" v-if="mapStore.getMap()!=null" >
       <MapPopup />
      </div>
     
@@ -94,29 +94,29 @@ export default {
   },
   methods: {
     singleClickEvent(){
-      this.mapStore.getMap().on('singleclick', this.manageOverlay);
+      this.mapStore.getMap().on('click', this.manageOverlay);
       
     },
-    manageOverlay(e){
-      this.clickedFeature = this.mapStore.getMap().forEachFeatureAtPixel(e.pixel, function (feature) {
+    manageOverlay(e) {
+      this.overlay = new Overlay({
+        element: this.$refs.popup,
+        autoPan: {
+          animation: {
+            duration: 250,
+          },
+        },
+      });
+      this.overlay.set("isPopup", "true");
+      this.mapStore.getMap().addOverlay(this.overlay)
+      this.clickedFeature = e == null ? null : this.mapStore.getMap().forEachFeatureAtPixel(e.pixel, function (feature) {
         return feature;
       });
-        this.overlay = new Overlay({
-            element: this.$refs.popup,
-            autoPan: {
-                animation: {
-                    duration: 250,
-                },
-            },
-          });
-        if(this.clickedFeature){
-          console.log(this.clickedFeature.getGeometry().getCoordinates())
-          this.overlay.set("isPopup","true");
-          this.mapStore.getMap().addOverlay(this.overlay)
-          this.overlay.setPosition(this.clickedFeature.getGeometry().getCoordinates())
-        }else{
-          this.overlay.setPosition(undefined);
-        }
+      if (this.clickedFeature) {
+        // console.log(this.clickedFeature.getGeometry().getCoordinates())
+        this.overlay.setPosition(this.clickedFeature.getGeometry().getCoordinates())
+      } else {
+        this.overlay.setPosition(undefined)
+      }
     },
     async getGmapSession(token){
       this.gmapSession = await googleMapService.getLastValidSession(token);
@@ -266,7 +266,8 @@ export default {
     },
     setMapLoaded(){
       this.isMapLoaded=true;
-      console.log("map loaded")
+      this.manageOverlay(null)
+      // console.log("map loaded")
     },
     getIsMapLoaded(){
       return this.isMapLoaded;
