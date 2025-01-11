@@ -1,13 +1,11 @@
 <template>
   <div id="map" class="map-container border rounded-4" ref="map">
     <!-- <div ref="popup" class="popup"></div> -->
-     <div ref="popup"  id="popup" class="ol-popup" v-if="mapStore.getMap()!=null" >
-      <MapPopup />
-     </div>
-    
+
+    <MapPopup :popupContent="clickedFeaturesProp" ref="mapPopup" />
+
   </div>
-  <img src="../../google_logo/google_logo/android/res/drawable-mdpi/google_on_non_white.png" class="google-logo"
-    />
+  <img src="../../google_logo/google_logo/android/res/drawable-mdpi/google_on_non_white.png" class="google-logo" />
   <YourPosition v-if="mapStore.getMap()!=null && isMapLoaded" :popupContent="'blank'" :latitude="latitude"
     :longitude="longitude" :mapObj="mapStore.getMap()" :key="1" ref="position" />
 
@@ -55,6 +53,7 @@ import {
 import MapPopup from './MapPopup.vue';
 // let buttons = ref([])
 let position =ref()
+let popupContent = ref()
 export default {
   name: "mapContainer",
   props: ['rigs','longitude','latitude'],
@@ -68,13 +67,13 @@ export default {
       isMapLoaded: false,
       authWs: null,
       gmapSession: null,
-      features: [],
+      // features: [],
       vectorSource: null,
       clusterSource: null,
       clusters: null,
       clickedFeature: null,
-      position: ref(),
-      overlay: null
+      overlay: null,
+      clickedFeaturesProp: null
     }
   },
   async mounted() {
@@ -86,8 +85,10 @@ export default {
     this.postRenderMap()
     this.singleClickEvent();
     this.rigsTypeStore.$subscribe(() => {
-      this.removeOverlays();
-      this.recalculateRigs();
+      // this.removeOverlays();
+      console.log(this.rigsTypeStore.getType())
+      console.log(this.mapStore.getMap().getLayers().getArray())
+      this.reloadOverlaysRigs();
     });
   },
   updated(){
@@ -99,7 +100,7 @@ export default {
     },
     manageOverlay(e) {
       this.overlay = new Overlay({
-        element: this.$refs.popup,
+        element: this.$refs.mapPopup.$refs.popup,
         autoPan: {
           animation: {
             duration: 250,
@@ -114,6 +115,11 @@ export default {
       if (this.clickedFeature) {
         // console.log(this.clickedFeature.getGeometry().getCoordinates())
         this.overlay.setPosition(this.clickedFeature.getGeometry().getCoordinates())
+
+        let arrayOfFeatures = this.clickedFeature.values_.features
+        let arrayOfRigs = arrayOfFeatures.map((feature) => feature.values_.rig)
+        console.log(arrayOfRigs.map((rig) => rig.rig.flag))
+        this.clickedFeaturesProp = arrayOfRigs.map((rig) => rig.rig.flag )//arrayOfRigs
       } else {
         this.overlay.setPosition(undefined)
       }
@@ -126,18 +132,20 @@ export default {
       this.authWs = await authenticate('refuel','refuelistheway')
       // console.log(this.authWs.token)
     },
-    async clusterizedOverlays(){
+    async showAndClusterizePopups(){
+      this.removeClusterizedPopups();
+      let features = [];
       // console.log(this.rigsToShowStore.getRigs().length)
       for (let i = 0; i < this.rigsToShowStore.getRigs().length; ++i) {
         let rig = this.rigsToShowStore.getRigs()[i];
         const coordinates = [rig.rig.longitude, rig.rig.latitude];
-        this.features[i] = new Feature(new Point(coordinates));
-        this.features[i].set('rig', rig);
+        features[i] = new Feature(new Point(coordinates));
+        features[i].set('rig', rig);
         // console.log(features[i].values_.rig.rig)
       }
 
       this.vectorSource = new VectorSource({
-        features: this.features,
+        features: features,
       });
 
       this.clusterSource = new Cluster({
@@ -145,10 +153,12 @@ export default {
         source: this.vectorSource,
       });
 
+      // console.log(features)
       const styleCache = {};
 
       this.clusters = new VectorLayer({
         source: this.clusterSource,
+        name: 'clusters',
         style: function (feature) {
           const size = feature.get('features').length;
           let style = styleCache[size];
@@ -176,11 +186,12 @@ export default {
         },
       });
       this.mapStore.getMap().addLayer(this.clusters);
+      console.log(this.mapStore.getMap().getLayers().getArray())
     },
     async reloadOverlaysRigs(){
       await this.recalculateRigs();
       // this.setupOverlays(this.mapStore.getMap());
-      await this.clusterizedOverlays();
+      await this.showAndClusterizePopups();
     },
     setZoomAndPosition(){
       this.mapStore.getMap().getView().setCenter([this.longitude, this.latitude]);
@@ -278,6 +289,9 @@ export default {
             this.mapStore.getMap().removeOverlay(overlay)
           }
         }
+    },
+    removeClusterizedPopups(){
+      this.mapStore.getMap().removeLayer(this.clusters);
     }
   }
 }

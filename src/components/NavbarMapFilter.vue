@@ -13,8 +13,8 @@ import Listbox from 'primevue/listbox';
 </script>
 
 <script>
-import { useAllRigsTypeStore } from '@/stores/rigs';
-import { useRigsTypeStore } from '@/stores/rigs';
+import { useAllRigsTypeStore, useRigsTypeStore } from '@/stores/rigs';
+import { useMapStore } from '@/stores/googleMap';
 export default {
     data(){
         return {
@@ -22,6 +22,7 @@ export default {
             checked: false,
             allRigsTypeStore : useAllRigsTypeStore(),
             rigTypeStore : useRigsTypeStore(),
+            mapStore : useMapStore(),
             rigType: null
         }
     },

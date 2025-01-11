@@ -6,9 +6,12 @@
             <p>You clicked here:</p><code>{{ popupContent }}</code>
         </div>
     </div> -->
-
+    <div ref="popup"  id="popup" class="ol-popup" >
     <a href="#" id="popup-closer" class="ol-popup-closer" ref="popup-closer" @click="closePopup"></a>
+    {{ popupContent }}
+    {{ console.log(popupContent) }}
     <Button label="Submit" />
+    </div>
 
 </template>
 
@@ -37,6 +40,7 @@ export default {
         // console.log(this.$refs.popup)
         // this.setupOverlay();
         // this.preparePopup();
+        // console.log(this.popupContent)
     },
     updated(){
         
