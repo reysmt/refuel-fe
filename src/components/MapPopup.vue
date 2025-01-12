@@ -8,7 +8,6 @@
     </div> -->
     <div ref="popup"  id="popup" class="ol-popup" >
     <a href="#" id="popup-closer" class="ol-popup-closer" ref="popup-closer" @click="closePopup"></a>
-    {{ popupContent }}
     {{ console.log(popupContent) }}
     <Button label="Submit" />
     </div>

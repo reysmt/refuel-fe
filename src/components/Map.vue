@@ -2,7 +2,7 @@
   <div id="map" class="map-container border rounded-4" ref="map">
     <!-- <div ref="popup" class="popup"></div> -->
 
-    <MapPopup :popupContent="clickedFeaturesProp" ref="mapPopup" />
+    <MapPopup :popupContent="clickedFeaturesProp" ref="mapPopup" v-if="mapStore.getMap()!=null" />
 
   </div>
   <img src="../../google_logo/google_logo/android/res/drawable-mdpi/google_on_non_white.png" class="google-logo" />
@@ -46,14 +46,15 @@ import {Vector as VectorLayer} from 'ol/layer.js';
 import Point from 'ol/geom/Point.js';
 import {
   Circle as CircleStyle,
+  RegularShape,
   Fill,
   Style,
   Text,
+  Icon,
 } from 'ol/style.js';
 import MapPopup from './MapPopup.vue';
 // let buttons = ref([])
 let position =ref()
-let popupContent = ref()
 export default {
   name: "mapContainer",
   props: ['rigs','longitude','latitude'],
@@ -118,8 +119,8 @@ export default {
 
         let arrayOfFeatures = this.clickedFeature.values_.features
         let arrayOfRigs = arrayOfFeatures.map((feature) => feature.values_.rig)
-        console.log(arrayOfRigs.map((rig) => rig.rig.flag))
-        this.clickedFeaturesProp = arrayOfRigs.map((rig) => rig.rig.flag )//arrayOfRigs
+        // console.log(arrayOfRigs.map((rig) => rig.rig.flag))
+        this.clickedFeaturesProp = arrayOfRigs//arrayOfRigs
       } else {
         this.overlay.setPosition(undefined)
       }
@@ -161,23 +162,32 @@ export default {
         name: 'clusters',
         style: function (feature) {
           const size = feature.get('features').length;
+          let price = feature.get('features').map((feature) => feature.values_.rig.rigPrices[0].price.toFixed(2))
+          let text;
+          text = size > 1 ? size.toString() : price[0].toString() + "€".toString();
           let style = styleCache[size];
           if (!style) {
             style = new Style({
-              image: new CircleStyle({
-                radius: 15,
-                // stroke: new Stroke({
-                //   color: '#fff',
-                // }),
-                fill: new Fill({
-                  color: '#3399CC',
-                }),
+              // image: new RegularShape({
+              //     fill: new Fill({
+              //       color: '#3b82f6',
+              //     }),
+              //   points: 4,
+              //   radius: 20,
+              //   angle: Math.PI / 4,
+              // }),
+              image: new Icon({
+                src: '../../src/assets/local_gas_stationx4.jpg',
+                scale: 0.4,
               }),
               text: new Text({
-                text: size.toString(),
+                text: text,
                 fill: new Fill({
-                  color: '#fff',
+                  color: '#3b82f6',
                 }),
+                scale: 1,
+                offsetY: 13.5,
+                font: 'bold .8rem sans-serif',
               }),
             });
             styleCache[size] = style;
@@ -186,7 +196,7 @@ export default {
         },
       });
       this.mapStore.getMap().addLayer(this.clusters);
-      console.log(this.mapStore.getMap().getLayers().getArray())
+      // console.log(this.mapStore.getMap().getLayers().getArray())
     },
     async reloadOverlaysRigs(){
       await this.recalculateRigs();
