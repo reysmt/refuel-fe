@@ -162,9 +162,12 @@ export default {
         name: 'clusters',
         style: function (feature) {
           const size = feature.get('features').length;
-          let price = feature.get('features').map((feature) => feature.values_.rig.rigPrices[0].price.toFixed(2))
+          let rig = feature.get('features').map((feature) => feature.values_.rig.rig.rigId)
+          let prices = feature.get('features').map((feature) => feature.values_.rig.rigPrices[0].price.toFixed(2))
           let text;
-          text = size > 1 ? size.toString() : price[0].toString() + "€".toString();
+          text = size > 1 ? size.toString() : prices[0].toString() + "€".toString();
+          // console.log(rig)
+          // console.log(text)
           let style = styleCache[size];
           if (!style) {
             style = new Style({
@@ -177,17 +180,17 @@ export default {
               //   angle: Math.PI / 4,
               // }),
               image: new Icon({
-                src: '../../src/assets/local_gas_stationx4.jpg',
+                src: size == 1 ? '../../src/assets/local_gas_stationx4-blue.jpg' : '../../src/assets/local_gas_stationx4-green.jpg',
                 scale: 0.4,
               }),
               text: new Text({
                 text: text,
                 fill: new Fill({
-                  color: '#3b82f6',
+                  color: size == 1 ? '#3b82f6' : '#10b981',
                 }),
                 scale: 1,
-                offsetY: 13.5,
-                font: 'bold .8rem sans-serif',
+                offsetY: 9,
+                font: 'bold .7rem sans-serif',
               }),
             });
             styleCache[size] = style;

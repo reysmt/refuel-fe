@@ -6,15 +6,33 @@
             <p>You clicked here:</p><code>{{ popupContent }}</code>
         </div>
     </div> -->
-    <div ref="popup"  id="popup" class="ol-popup" >
-    <a href="#" id="popup-closer" class="ol-popup-closer" ref="popup-closer" @click="closePopup"></a>
-    {{ console.log(popupContent) }}
-    <Button label="Submit" />
+    <div ref="popup" id="popup" class="ol-popup">
+        <a href="#" id="popup-closer" class="ol-popup-closer" ref="popup-closer" @click="closePopup"></a>
+        {{ console.log(popupContent) }}
+        <DataTable :value="popupContent" selectionMode="single"
+            :rows="4" scrollable scrollHeight="500px">
+            <Column field="rig.flag" header="Insegna" sortable style="min-width: 1rem"></Column>
+            <Column field="rig.municipality" header="Comune" sortable style="min-width: 1rem"></Column>
+            <Column field="price" header="Price" sortable style="min-width: 1rem">
+                <template #body="slotProps">
+                    {{ slotProps.data.price }} €
+                </template>
+            </Column>
+            <!-- <Column field="" header="" style="min-width: 1rem">
+                <template #body="{data}">
+                        <Button type="button" label="Dettagli"></Button>
+                        
+                    </template>
+            </Column> -->
+        </DataTable>
+       
     </div>
 
 </template>
 
 <script setup>
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 import Button from 'primevue/button';
 </script>
 
