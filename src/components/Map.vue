@@ -2,7 +2,7 @@
   <div id="map" class="map-container border rounded-4" ref="map">
     <!-- <div ref="popup" class="popup"></div> -->
 
-    <MapPopup :popupContent="clickedFeaturesProp" ref="mapPopup" v-if="mapStore.getMap()!=null" />
+    <MapPopup :popupContent="clickedFeaturesProp" :gmapKey="gmapSession.key" ref="mapPopup" v-if="mapStore.getMap()!=null" />
 
   </div>
   <img src="../../google_logo/google_logo/android/res/drawable-mdpi/google_on_non_white.png" class="google-logo" />
@@ -155,46 +155,34 @@ export default {
       });
 
       // console.log(features)
-      const styleCache = {};
-
       this.clusters = new VectorLayer({
         source: this.clusterSource,
         name: 'clusters',
         style: function (feature) {
           const size = feature.get('features').length;
-          let rig = feature.get('features').map((feature) => feature.values_.rig.rig.rigId)
+          // let rig = feature.get('features').map((feature) => feature.values_.rig.rig.rigId)
           let prices = feature.get('features').map((feature) => feature.values_.rig.rigPrices[0].price.toFixed(2))
+          // console.log( rig + " "+ prices[0])
           let text;
           text = size > 1 ? size.toString() : prices[0].toString() + "€".toString();
           // console.log(rig)
           // console.log(text)
-          let style = styleCache[size];
-          if (!style) {
-            style = new Style({
-              // image: new RegularShape({
-              //     fill: new Fill({
-              //       color: '#3b82f6',
-              //     }),
-              //   points: 4,
-              //   radius: 20,
-              //   angle: Math.PI / 4,
-              // }),
-              image: new Icon({
-                src: size == 1 ? '../../src/assets/local_gas_stationx4-blue.jpg' : '../../src/assets/local_gas_stationx4-green.jpg',
-                scale: 0.4,
+          let style = null;
+          style = new Style({
+            image: new Icon({
+              src: size == 1 ? '../../src/assets/local_gas_stationx4-blue.jpg' : '../../src/assets/local_gas_stationx4-darkblue.jpg',
+              scale: 0.4,
+            }),
+            text: new Text({
+              text: text,
+              fill: new Fill({
+                color: size == 1 ? '#3b82f6' : '#0055DF',
               }),
-              text: new Text({
-                text: text,
-                fill: new Fill({
-                  color: size == 1 ? '#3b82f6' : '#10b981',
-                }),
-                scale: 1,
-                offsetY: 9,
-                font: 'bold .7rem sans-serif',
-              }),
-            });
-            styleCache[size] = style;
-          }
+              scale: 1,
+              offsetY: 9,
+              font: 'bold .7rem sans-serif',
+            }),
+          });
           return style;
         },
       });

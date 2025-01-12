@@ -8,9 +8,9 @@
     </div> -->
     <div ref="popup" id="popup" class="ol-popup">
         <a href="#" id="popup-closer" class="ol-popup-closer" ref="popup-closer" @click="closePopup"></a>
-        {{ console.log(popupContent) }}
-        <DataTable :value="popupContent" selectionMode="single"
-            :rows="4" scrollable scrollHeight="500px">
+        <!-- {{ console.log(popupContent) }} -->
+        <DataTable v-model:selection="selectedRig" :value="popupContent" selectionMode="single"
+            :rows="4" scrollable scrollHeight="400px" @row-select="onRigSelect">
             <Column field="rig.flag" header="Insegna" sortable style="min-width: 1rem"></Column>
             <Column field="rig.municipality" header="Comune" sortable style="min-width: 1rem"></Column>
             <Column field="price" header="Price" sortable style="min-width: 1rem">
@@ -28,15 +28,16 @@
        
     </div>
 
+    <RigDetail v-if="selectedRig != null" :isVisible="detailsVisible" :rig="selectedRig.rig" :rigPrices="selectedRig.rigPrices" @updatedVisibility="updatedVisibility" :gmapKey="gmapKey"></RigDetail>
 </template>
 
 <script setup>
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import Button from 'primevue/button';
 </script>
 
 <script>
+import RigDetail from '@/components/RigDetail.vue';
 // import { toStringHDMS } from 'ol/coordinate.js';
 import Overlay from 'ol/Overlay.js';
 import { useRigsTypeStore } from '@/stores/rigs';
@@ -46,10 +47,11 @@ export default {
     data() {
         return {
             popup: null,
-            visible: false,
+            detailsVisible: false,
             // priceToShow: null,
             rigsTypeStore: useRigsTypeStore(),
-            mapStore : useMapStore()
+            mapStore : useMapStore(),
+            selectedRig: null
         }
     },
     mounted() {
@@ -62,7 +64,7 @@ export default {
     updated(){
         
     },
-    props: ['mapObj', 'popupContent', 'longitude', 'latitude','rig','rigPrices','gmapKey'],
+    props: ['popupContent','gmapKey'],
     methods: {
         closePopup() {
             let overlays = this.mapStore.getMap().getOverlays().array_.filter((overlay) => overlay.values_.isPopup === "true")
@@ -70,6 +72,13 @@ export default {
                 this.mapStore.getMap().removeOverlay(overlay);
                 // console.log(this.mapStore.getMap().getOverlays().array_.filter((overlay) => overlay.values_.isPopup === "true"))
             }
+        },
+        onRigSelect(){
+            console.log(this.selectedRig)
+            this.detailsVisible = true;
+        },
+        updatedVisibility(newVal){
+            this.detailsVisible = newVal
         }
     }
 }
