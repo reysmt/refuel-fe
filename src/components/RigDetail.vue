@@ -1,5 +1,6 @@
 <template>
-    <Sidebar v-model:visible="isSidebarVisible" header="Dettagli" position="bottom" style="height: auto; max-height: 100%;">
+    <Sidebar v-model:visible="isSidebarVisible" header="Dettagli" position="bottom"
+        style="height: auto; max-height: 100%;">
 
         <!-- <StreetView :longitude="rig.longitude" :latitude="rig.latitude" @click="slotProps.onClick" /> -->
 
@@ -14,16 +15,18 @@
             </Fieldset>
             <Image alt="Image" preview class="street-view-section">
                 <template #image>
-                    <StreetViewStaticImage :longitude="rig.longitude" :latitude="rig.latitude" :gKey="key"></StreetViewStaticImage>
-                    <i class="bi bi-eye-fill custom-eye" style="font-size: 3rem;"></i> 
+                    <StreetViewStaticImage :longitude="rig.longitude" :latitude="rig.latitude" :gKey="gmapKey">
+                    </StreetViewStaticImage>
+                    <i class="bi bi-eye-fill custom-eye" style="font-size: 3rem;"></i>
                     <!-- <i class="bi bi-map" style="font-size: 4rem;"></i> -->
                 </template>
                 <template #preview="slotProps">
-                    <StreetView :longitude="rig.longitude" :latitude="rig.latitude" :gmapKey="key" @click="slotProps.onClick" />
+                    <StreetView :longitude="rig.longitude" :latitude="rig.latitude" :gmapKey="gmapKey"
+                        @click="slotProps.onClick" />
                 </template>
             </Image>
             <!-- <Divider style="margin-top: .8rem; margin-bottom: .8rem;" /> -->
-            <DataTable :value="refPrices" sortField="price" :sortOrder="1" showGridlines stripedRows scrollable lazy
+            <DataTable :value="rigPrices" sortField="price" :sortOrder="1" showGridlines stripedRows scrollable
                 scrollHeight="300px" tableStyle="min-width: auto" style="margin-top: .5rem;">
                 <Column field="fuelDescription" header="Tipo" sortable>
                     <template #body="{data}">
@@ -48,9 +51,10 @@
             </DataTable>
             <Divider style="margin-top: .8rem; margin-bottom: .8rem;" />
             <div class="">
-                <Button type="button" label="Vai" @click="isSidebarVisible = false"></Button>
+                <Button type="button" label="Vai" @click="isSidebarVisible = false" style="margin-right: 10px;"></Button>
+                <Button type="button" severity="info" label="Storico" style="margin-right: 10px;"></Button>
                 <Button type="button" label="Chiudi" severity="secondary" @click="isSidebarVisible = false"
-                    style="margin-left: 10px;"></Button>
+                    style="margin-right: 10px;"></Button>
             </div>
         </div>
     </Sidebar>
@@ -73,15 +77,12 @@ export default {
     },
     mounted() {
         //console.log(this.rig)
-        this.refPrices=this.rigPrices;
-        this.key = this.gmapKey;
-        // console.log(this.key)
+        // this.key = this.gmapKey;
     },
     data() {
         return {
-            refPrices : ref(),
             isSidebarVisible : this.isVisible,
-            key: null
+            // key: null
         }
     },
     props: ['isVisible','rig', 'rigPrices','gmapKey'],
