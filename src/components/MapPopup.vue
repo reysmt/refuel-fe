@@ -8,13 +8,19 @@
     </div> -->
     <div ref="popup" id="popup" class="ol-popup">
         <a href="#" id="popup-closer" class="ol-popup-closer" ref="popup-closer" @click="closePopup"></a>
-        <DataTable v-model:selection="selectedRig" :value="popupContent" selectionMode="single" :rows="4" scrollable lazy
-            scrollHeight="400px" @row-select="onRigSelect">
-            <Column field="rig.flag" header="Insegna" style="min-width: 1rem"></Column>
-            <Column field="rig.municipality" header="Comune" sortable style="min-width: 1rem"></Column>
-            <Column field="rigPrices" header="Price" style="min-width: 1rem">
+        <DataTable v-model:selection="selectedRig" :value="popupContent" selectionMode="single" :rows="4" scrollable
+            lazy scrollHeight="400px" @row-select="onRigSelect">
+            <Column field="rig.flag" header="Insegna" style="min-width: 1rem; font-size: .8rem;"></Column>
+            <Column field="rig.municipality" header="Comune" sortable style="min-width: 1rem; font-size: .8rem;">
+            </Column>
+            <Column field="rigPrices" header="Price" style="min-width: 1rem; font-size: .8rem;">
                 <template #body="slotProps">
-                    {{ showPrice(slotProps) }} € / Lt
+                    {{ showPrice(slotProps) }} €/Lt
+                </template>
+            </Column>
+            <Column field="" header="" style="padding: 0;">
+                <template #body>
+                    <i class="pi pi-info-circle"></i>
                 </template>
             </Column>
             <!-- <Column field="" header="" style="min-width: 1rem">
@@ -34,6 +40,7 @@
 <script setup>
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import Tag from 'primevue/tag';
 </script>
 
 <script>
@@ -58,7 +65,7 @@ export default {
         // console.log(this.$refs.popup)
         // this.setupOverlay();
         // this.preparePopup();
-        // console.log(this.popupContent)
+        
     },
     updated() {
 
@@ -73,7 +80,6 @@ export default {
             }
         },
         onRigSelect() {
-            console.log(this.selectedRig)
             this.detailsVisible = true;
         },
         updatedVisibility(newVal) {
@@ -101,6 +107,17 @@ export default {
         filterPrice(rigPrices ,rigType){
             // console.log(rigPrices.filter(price => price.rigFuelType.rigFuelTypeDescription.toLowerCase() == rigType.toLowerCase()))
             return rigPrices.filter(price => price.rigFuelType.rigFuelTypeDescription.toLowerCase() == rigType.toLowerCase())
+        }
+    },
+    watch: {
+        popupContent: function (val) {
+            console.log(val.length)
+            if(val.length < 2){
+                console.log(val[0])
+                this.selectedRig = val[0];
+                this.onRigSelect();
+            }
+            // this.preparePopup();
         }
     }
 }

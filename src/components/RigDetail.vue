@@ -3,8 +3,6 @@
         style="height: auto; max-height: 100%;">
 
         <!-- <StreetView :longitude="rig.longitude" :latitude="rig.latitude" @click="slotProps.onClick" /> -->
-
-
         <div>
             <Fieldset :legend="rig.flag" style="padding-top: 0; padding-bottom: 0rem; margin-bottom: .5rem;">
                 <span class="font-small p-text-secondary">Gestore:</span> <br>

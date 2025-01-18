@@ -2,12 +2,16 @@
   <div id="map" class="map-container border rounded-4" ref="map">
     <!-- <div ref="popup" class="popup"></div> -->
 
-    <MapPopup :popupContent="clickedFeaturesProp" :gmapKey="gmapSession.key" ref="mapPopup" v-if="mapStore.getMap()!=null" />
+    <MapPopup :popupContent="clickedFeaturesProp" :gmapKey="gmapSession.key" ref="mapPopup"
+      v-if="mapStore.getMap()!=null" />
 
   </div>
   <img src="../../google_logo/google_logo/android/res/drawable-mdpi/google_on_non_white.png" class="google-logo" />
   <YourPosition v-if="mapStore.getMap()!=null && isMapLoaded" :popupContent="'blank'" :latitude="latitude"
     :longitude="longitude" :mapObj="mapStore.getMap()" :key="1" ref="position" />
+
+  <RigDetail v-if="clickedFeaturesProp != null" :isVisible="showDetails" :rig="clickedFeaturesProp[0].rig"
+    :rigPrices="clickedFeaturesProp[0].rigPrices" @updatedVisibility="updatedVisibility" :gmapKey="gmapSession.key"></RigDetail>
 
   <!-- <div v-if="mapStore.getMap()!=null && isMapLoaded && rigsToShowStore.getLength() > 0">
     <ButtonRig v-for="rig in rigsToShowStore.getRigs()"
@@ -24,6 +28,7 @@
 </template>
 <script setup>
 import YourPosition from './YourPosition.vue'
+import RigDetail from './RigDetail.vue';
 // import MapPopup from './MapPopup.vue';
 </script>
 <script>
@@ -71,7 +76,8 @@ export default {
       clusters: null,
       clickedFeature: null,
       overlay: null,
-      clickedFeaturesProp: null
+      clickedFeaturesProp: null,
+      showDetails: false
     }
   },
   async mounted() {
@@ -94,6 +100,9 @@ export default {
   updated(){
   },
   methods: {
+    updatedVisibility(newVal) {
+      this.showDetails = newVal
+    },
     singleClickEvent(){
       this.mapStore.getMap().on('click', this.manageOverlay);
       
@@ -114,12 +123,18 @@ export default {
       });
       if (this.clickedFeature) {
         // console.log(this.clickedFeature.getGeometry().getCoordinates())
-        this.overlay.setPosition(this.clickedFeature.getGeometry().getCoordinates())
+        
 
         let arrayOfFeatures = this.clickedFeature.values_.features
         let arrayOfRigs = arrayOfFeatures.map((feature) => feature.values_.rig)
         // console.log(arrayOfRigs.map((rig) => rig.rig.flag))
         this.clickedFeaturesProp = arrayOfRigs//arrayOfRigs
+        if(this.clickedFeaturesProp.length < 2){
+          console.log(this.clickedFeaturesProp)
+          this.showDetails = true;
+          return
+        }
+        this.overlay.setPosition(this.clickedFeature.getGeometry().getCoordinates())
       } else {
         this.overlay.setPosition(undefined)
       }

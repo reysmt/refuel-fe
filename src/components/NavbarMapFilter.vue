@@ -42,6 +42,8 @@ export default {
         },
         rigType(newVal){
             this.rigTypeStore.setType(newVal);
+            this.$emit('updatedVisibility', false);
+            this.isFilterVisible = false;
         }
     },
     emits: ["updatedVisibility"]
