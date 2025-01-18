@@ -9,7 +9,6 @@
   <YourPosition v-if="mapStore.getMap()!=null && isMapLoaded" :popupContent="'blank'" :latitude="latitude"
     :longitude="longitude" :mapObj="mapStore.getMap()" :key="1" ref="position" />
 
-
   <!-- <div v-if="mapStore.getMap()!=null && isMapLoaded && rigsToShowStore.getLength() > 0">
     <ButtonRig v-for="rig in rigsToShowStore.getRigs()"
     :rig="rig.rig"
@@ -45,8 +44,6 @@ import {Cluster, Vector as VectorSource} from 'ol/source.js';
 import {Vector as VectorLayer} from 'ol/layer.js';
 import Point from 'ol/geom/Point.js';
 import {
-  Circle as CircleStyle,
-  RegularShape,
   Fill,
   Style,
   Text,
@@ -87,8 +84,10 @@ export default {
     this.singleClickEvent();
     this.rigsTypeStore.$subscribe(() => {
       // this.removeOverlays();
-      console.log(this.rigsTypeStore.getType())
-      console.log(this.mapStore.getMap().getLayers().getArray())
+      // console.log(this.rigsTypeStore.getType())
+      // console.log(this.mapStore.getMap().getLayers().getArray())
+      this.mapStore.getMap().removeOverlay(this.overlay);
+      this.clickedFeaturesProp = null;
       this.reloadOverlaysRigs();
     });
   },
@@ -158,32 +157,8 @@ export default {
       this.clusters = new VectorLayer({
         source: this.clusterSource,
         name: 'clusters',
-        style: function (feature) {
-          const size = feature.get('features').length;
-          // let rig = feature.get('features').map((feature) => feature.values_.rig.rig.rigId)
-          let prices = feature.get('features').map((feature) => feature.values_.rig.rigPrices[0].price.toFixed(2))
-          // console.log( rig + " "+ prices[0])
-          let text;
-          text = size > 1 ? size.toString() : prices[0].toString() + "€".toString();
-          // console.log(rig)
-          // console.log(text)
-          let style = null;
-          style = new Style({
-            image: new Icon({
-              src: size == 1 ? '../../src/assets/local_gas_stationx4-blue.jpg' : '../../src/assets/local_gas_stationx4-darkblue.jpg',
-              scale: 0.4,
-            }),
-            text: new Text({
-              text: text,
-              fill: new Fill({
-                color: size == 1 ? '#3b82f6' : '#0055DF',
-              }),
-              scale: 1,
-              offsetY: 9,
-              font: 'bold .7rem sans-serif',
-            }),
-          });
-          return style;
+        style: (feature) => {
+          return this.buildClusterStyle(feature)
         },
       });
       this.mapStore.getMap().addLayer(this.clusters);
@@ -217,7 +192,7 @@ export default {
       this.mapStore.getMap().on('moveend', this.reloadOverlaysRigs);
     },
     async recalculateRigs(){
-      let distanceThreshold = 1;
+      let distanceThreshold = 3;
       if(this.rigsStore.getRigs().length <= 0){
         distanceThreshold = 10;
       }
@@ -266,6 +241,36 @@ export default {
           
         }
       }
+    },
+    buildClusterStyle(feature){
+      const size = feature.get('features').length;
+      let prices = feature.get('features').map((feature) => feature.values_.rig.rigPrices) //all prices in a cluster
+      let text;
+      prices = prices[0]
+      // console.log(prices)
+      prices = this.rigsTypeStore.getType() != null 
+                ? 
+                prices.filter(price => price.rigFuelType.rigFuelTypeDescription.toLowerCase() == this.rigsTypeStore.getType().toLowerCase()) 
+                : prices
+      // console.log(prices)
+      text = size > 1 ? size.toString() : prices[0].price.toFixed(2).toString() + "€".toString();
+      let style = null;
+      style = new Style({
+        image: new Icon({
+          src: size == 1 ? new URL('@/assets/local_gas_stationx4-blue.jpg', import.meta.url).href : new URL('@/assets/local_gas_stationx4-darkblue.jpg', import.meta.url).href,
+          scale: 0.4,
+        }),
+        text: new Text({
+          text: text,
+          fill: new Fill({
+            color: size == 1 ? '#3b82f6' : '#0055DF',
+          }),
+          scale: 1,
+          offsetY: 9,
+          font: 'bold .7rem sans-serif',
+        }),
+      });
+      return style;
     },
     getButtons(){
       return this.$refs.buttons;

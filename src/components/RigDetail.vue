@@ -17,7 +17,7 @@
                 <template #image>
                     <StreetViewStaticImage :longitude="rig.longitude" :latitude="rig.latitude" :gKey="gmapKey">
                     </StreetViewStaticImage>
-                    <i class="bi bi-eye-fill custom-eye" style="font-size: 3rem;"></i>
+                    <!-- <i class="bi bi-eye-fill custom-eye" style="font-size: 3rem;"></i> -->
                     <!-- <i class="bi bi-map" style="font-size: 4rem;"></i> -->
                 </template>
                 <template #preview="slotProps">
