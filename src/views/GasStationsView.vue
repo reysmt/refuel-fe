@@ -1,6 +1,6 @@
 <template>
   <!-- on desktop -->
-  <Toast position="top-center" style="width: 20rem; font-size: .8rem; top: 13px"/>
+  <Toast position="top-center" style="width: 20rem; font-size: .8rem; top: 13px; background: 255, 255, 255 / 70%;"/>
   <div class="main">
     <div class="loading-div" v-if="mapContainer == null">
       <Skeleton class="loading-skeleton"></Skeleton>
