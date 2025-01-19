@@ -130,13 +130,13 @@ export default {
         // console.log(arrayOfRigs.map((rig) => rig.rig.flag))
         this.clickedFeaturesProp = arrayOfRigs//arrayOfRigs
         if(this.clickedFeaturesProp.length < 2){
-          console.log(this.clickedFeaturesProp)
+          // console.log(this.clickedFeaturesProp)
           this.showDetails = true;
           return
         }
         this.overlay.setPosition(this.clickedFeature.getGeometry().getCoordinates())
       } else {
-        this.overlay.setPosition(undefined)
+        this.mapStore.getMap().removeOverlay(this.overlay)
       }
     },
     async getGmapSession(token){

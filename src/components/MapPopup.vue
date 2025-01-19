@@ -111,13 +111,15 @@ export default {
     },
     watch: {
         popupContent: function (val) {
-            console.log(val.length)
-            if(val.length < 2){
-                console.log(val[0])
-                this.selectedRig = val[0];
-                this.onRigSelect();
+            if (val != null) {
+                // console.log(val.length)
+                if (val.length < 2) {
+                    // console.log(val[0])
+                    this.selectedRig = val[0];
+                    this.onRigSelect();
+                }
+                // this.preparePopup();
             }
-            // this.preparePopup();
         }
     }
 }
