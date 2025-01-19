@@ -1,5 +1,6 @@
 <template>
   <!-- on desktop -->
+  <Toast position="top-center" style="width: 20rem; font-size: .8rem; top: 13px"/>
   <div class="main">
     <div class="loading-div" v-if="mapContainer == null">
       <Skeleton class="loading-skeleton"></Skeleton>
@@ -17,6 +18,7 @@
 </template>
 
 <script setup>
+import Toast from 'primevue/toast';
 import { useRigsStore, useRigsToShowStore, useAllRigsTypeStore, useRigsTypeStore} from '@/stores/rigs';
 import { useMapStore } from '@/stores/googleMap';
 import Map from '@/components/Map.vue'

@@ -29,26 +29,27 @@ export default {
   mounted(){
     // console.log(this.displayList)
     this.items = ref([
-        {
-          label: 'List',
-          class: 'pi pi-bars',
-          command: () => {
-            this.displayList = !this.displayList
-            console.log(this.displayList);
-          }
-        },
+        // {
+        //   label: 'List',
+        //   class: 'pi pi-bars',
+        //   command: () => {
+        //     this.displayList = !this.displayList
+        //     console.log(this.displayList);
+        //   }
+        // },
         {
           label: 'Home',
           class: 'pi pi-home',
           command: () => {
             this.displayHome = true;
+            this.displayFilter = false;
           }
         },
         {
           label: "Filter",
           class: "pi pi-filter",
           command: () => {
-            this.displayFilter = true;
+            this.displayFilter = !this.displayFilter;
           }
         }
     ])

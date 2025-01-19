@@ -50,7 +50,7 @@
             <Divider style="margin-top: .8rem; margin-bottom: .8rem;" />
             <div class="">
                 <Button type="button" label="Vai" @click="isSidebarVisible = false" style="margin-right: 10px;"></Button>
-                <Button type="button" severity="info" label="Storico" style="margin-right: 10px;"></Button>
+                <!-- <Button type="button" severity="info" label="Storico" style="margin-right: 10px;"></Button> -->
                 <Button type="button" label="Chiudi" severity="secondary" @click="isSidebarVisible = false"
                     style="margin-right: 10px;"></Button>
             </div>

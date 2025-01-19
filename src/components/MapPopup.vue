@@ -13,7 +13,7 @@
             <Column field="rig.flag" header="Insegna" style="min-width: 1rem; font-size: .8rem;"></Column>
             <Column field="rig.municipality" header="Comune" sortable style="min-width: 1rem; font-size: .8rem;">
             </Column>
-            <Column field="rigPrices" header="Price" style="min-width: 1rem; font-size: .8rem;">
+            <Column field="rigPrices" header="Prezzo" style="min-width: 1rem; font-size: .8rem; white-space: nowrap; padding-right: .5rem;">
                 <template #body="slotProps">
                     {{ showPrice(slotProps) }} €/Lt
                 </template>
