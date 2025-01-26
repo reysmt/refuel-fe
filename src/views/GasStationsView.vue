@@ -9,7 +9,7 @@
       <Map :longitude="longitude" :latitude="latitude" ref="mapContainer">
       </Map>
     </div>
-    <NavbarMap :gmapKey="gmapKey"></NavbarMap>
+    <NavbarMap :gmapKey="gmapKey" :longitude="longitude" :latitude="latitude"></NavbarMap>
   </div>
   <div class="loading-spinner" v-if="rigsToShowStore.getLength() == 0">
       <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="100" fill="var(--surface-ground)"

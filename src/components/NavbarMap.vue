@@ -14,6 +14,7 @@
 import { ref } from 'vue';
 import NavbarMapList from './NavbarMapList.vue';
 import NavbarMapFilter from './NavbarMapFilter.vue';
+import { useMapStore } from '@/stores/googleMap';
 </script>
 <script>
 export default {
@@ -22,10 +23,11 @@ export default {
       displayList: ref(false),
       displayHome: ref(false),
       displayFilter: ref(false),
+      mapStore: useMapStore(),
       items: null
     }
   },
-  props: ['gmapKey'],
+  props: ['gmapKey','longitude','latitude'],
   mounted(){
     // console.log(this.displayList)
     this.items = ref([
@@ -43,6 +45,10 @@ export default {
           command: () => {
             this.displayHome = true;
             this.displayFilter = false;
+            this.mapStore.getMap().getView().animate({
+              center: [this.longitude, this.latitude],
+              duration: 1000
+            });
           }
         },
         {
