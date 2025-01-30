@@ -40,9 +40,13 @@ async function getFilteredRigs(rigsToShow, type){
     }).then(resp => resp.data);
 }
 
+async function getRigPriceHistoryByRigId(rigId){
+    return await axiosRigsInstance().get(`/history/${rigId}`).then(resp => resp.data);
+}
+
 async function checkReachability(){
     return await axiosRigsInstance().get('/test')
 }
 
 
-export{getAllRigPrices, getAllRigs, getNearbyRigs, getFilteredRigs, checkReachability, getNearbyRigsCsv}
+export{getAllRigPrices, getAllRigs, getNearbyRigs, getFilteredRigs, checkReachability, getNearbyRigsCsv, getRigPriceHistoryByRigId}

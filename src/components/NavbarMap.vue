@@ -8,12 +8,14 @@
   <NavbarMapList :isVisible="displayList" :gmapKey="gmapKey" @updatedVisibility="updatedVisibility"
     class="navbarmap-list"></NavbarMapList>
   <NavbarMapFilter :isVisible="displayFilter" @updatedVisibility="updatedVisibilityFilter"></NavbarMapFilter>
+  <NavbarMapInfo :isVisible="displayInfo" @updatedVisibility="updatedVisibilityInfo"></NavbarMapInfo>
 </template>
 <script setup>
 // import Dock from 'primevue/dock';
 import { ref } from 'vue';
 import NavbarMapList from './NavbarMapList.vue';
 import NavbarMapFilter from './NavbarMapFilter.vue';
+import NavbarMapInfo from './NavbarMapInfo.vue';
 import { useMapStore } from '@/stores/googleMap';
 </script>
 <script>
@@ -23,6 +25,7 @@ export default {
       displayList: ref(false),
       displayHome: ref(false),
       displayFilter: ref(false),
+      displayInfo: ref(false),
       mapStore: useMapStore(),
       items: null
     }
@@ -45,6 +48,7 @@ export default {
           command: () => {
             this.displayHome = true;
             this.displayFilter = false;
+            this.displayInfo = false;
             this.mapStore.getMap().getView().animate({
               center: [this.longitude, this.latitude],
               duration: 1000
@@ -56,6 +60,13 @@ export default {
           class: "pi pi-filter",
           command: () => {
             this.displayFilter = !this.displayFilter;
+          }
+        },
+        {
+          label: "Info",
+          class: "pi pi-info-circle",
+          command: () => {
+            this.displayInfo = !this.displayInfo;
           }
         }
     ])
@@ -74,6 +85,10 @@ export default {
     },
     updatedVisibilityFilter(newVal){
       this.displayFilter = newVal
+      // console.log(newVal)
+    },
+    updatedVisibilityInfo(newVal){
+      this.displayInfo = newVal
       // console.log(newVal)
     }
   }

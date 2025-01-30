@@ -63,6 +63,7 @@ export const useAllRigsTypeStore = defineStore('allType', {
   },
   actions: {
     getAllRigsType(){
+      this.allTypes.sort();
       return this.allTypes;
     },
     addAllRigsType(type){

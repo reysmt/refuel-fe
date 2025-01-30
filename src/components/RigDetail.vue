@@ -26,7 +26,7 @@
             <!-- <Divider style="margin-top: .8rem; margin-bottom: .8rem;" /> -->
             <DataTable :value="rigPrices" sortField="price" :sortOrder="1" showGridlines stripedRows scrollable
                 scrollHeight="300px" tableStyle="min-width: auto" style="margin-top: .5rem;">
-                <Column field="fuelDescription" header="Tipo" sortable>
+                <Column field="rigFuelType.rigFuelTypeDescription" header="Tipo" sortable>
                     <template #body="{data}">
                         <span>{{ data.rigFuelType.rigFuelTypeDescription }}</span><br>
                         <span class="font-small p-text-secondary"
