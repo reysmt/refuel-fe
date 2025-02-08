@@ -27,9 +27,7 @@ export default {
     },
     methods:{
         processData(){
-            console.log(this.rig.rigId)
             let labels = [];
-            let data = [];
             let rigTypes = [];
             this.currRig.forEach((rig) => {
                 if(labels.indexOf(rig.comuDate) === -1){
@@ -69,6 +67,10 @@ export default {
             this.isSidebarVisible = newVal;
             if(newVal){
                 // console.log(this.token)
+                this.chartData = ref({ labels: [], datasets: [] });
+                this.chartOptions = ref();
+                this.datasets = [];
+                this.currRig= null;
                 this.currRig = await getRigPriceHistoryByRigId(this.rig.rigId, this.token);
                 this.processData();
                 // console.log(this.currRig)
