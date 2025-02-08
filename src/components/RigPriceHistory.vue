@@ -1,7 +1,7 @@
 <template>
     <Sidebar v-model:visible="isSidebarVisible" header="Storico" position="full">
         <div class="card">
-            <Chart type="line" :data="chartData" :options="chartOptions" class="w-full h-50rem"  />
+            <Chart type="line" :data="chartData" :options="chartOptions" :height="500"/>
         </div>
     </Sidebar>
 </template>
