@@ -1,19 +1,19 @@
 <template>
   <div class="navigation-card">
     <a href="#" class="tab" v-for="item in items" v-bind:key="item.label">
-      <i :class="item.class" style="font-size: 1rem" @click="onDockItemClick($event, item)"></i>
+      <i :class="item.class" style="font-size: 1rem" @click="itemClick($event, item)"></i>
     </a>
   </div>
 
-  <NavbarMapList :isVisible="displayList" :gmapKey="gmapKey" @updatedVisibility="updatedVisibility"
-    class="navbarmap-list"></NavbarMapList>
+  <!-- <NavbarMapList :isVisible="displayList" :gmapKey="gmapKey" @updatedVisibility="updatedVisibility"
+    class="navbarmap-list"></NavbarMapList> -->
   <NavbarMapFilter :isVisible="displayFilter" @updatedVisibility="updatedVisibilityFilter"></NavbarMapFilter>
   <NavbarMapInfo :isVisible="displayInfo" @updatedVisibility="updatedVisibilityInfo"></NavbarMapInfo>
 </template>
 <script setup>
 // import Dock from 'primevue/dock';
 import { ref } from 'vue';
-import NavbarMapList from './NavbarMapList.vue';
+// import NavbarMapList from './NavbarMapList.vue';
 import NavbarMapFilter from './NavbarMapFilter.vue';
 import NavbarMapInfo from './NavbarMapInfo.vue';
 import { useMapStore } from '@/stores/googleMap';
@@ -22,10 +22,10 @@ import { useMapStore } from '@/stores/googleMap';
 export default {
   data(){
     return{
-      displayList: ref(false),
-      displayHome: ref(false),
-      displayFilter: ref(false),
-      displayInfo: ref(false),
+      displayList: false,
+      displayHome: false,
+      displayFilter: false,
+      displayInfo: false,
       mapStore: useMapStore(),
       items: null
     }
@@ -72,16 +72,12 @@ export default {
     ])
   },
   methods: {
-    onDockItemClick(event, item){
+    itemClick(event, item){
       if (item.command) {
         item.command();
     }
 
       event.preventDefault();
-    },
-    updatedVisibility(newVal){
-      this.displayList = newVal
-      // console.log(newVal)
     },
     updatedVisibilityFilter(newVal){
       this.displayFilter = newVal

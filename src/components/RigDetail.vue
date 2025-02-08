@@ -50,12 +50,14 @@
             <Divider style="margin-top: .8rem; margin-bottom: .8rem;" />
             <div class="">
                 <Button type="button" label="Vai" @click="openMaps()" style="margin-right: 10px;"></Button>
-                <!-- <Button type="button" severity="info" label="Storico" style="margin-right: 10px;"></Button> -->
-                <Button type="button" label="Chiudi" severity="secondary" @click="isSidebarVisible = false"
+                <Button type="button" severity="info" label="Storico" @click="isPriceHistoryVisible = !isPriceHistoryVisible" 
+                 style="margin-right: 10px;"></Button>
+                <Button type="button" label="Chiudi" severity="secondary" @click="closeSidebar()"
                     style="margin-right: 10px;"></Button>
             </div>
         </div>
     </Sidebar>
+    <RigPriceHistory :isVisible="isPriceHistoryVisible" :rig="rig" :token="token" @updatedVisibility="updatedVisibilityPriceHistory"></RigPriceHistory>
 </template>
 <script setup>
 import Image from 'primevue/image';
@@ -66,6 +68,7 @@ import Column from 'primevue/column';
 import Button from 'primevue/button';
 import Sidebar from 'primevue/sidebar';
 import { defineAsyncComponent, ref} from 'vue';
+import RigPriceHistory from './RigPriceHistory.vue';
 </script>
 <script>
 export default {
@@ -74,16 +77,17 @@ export default {
         StreetView : defineAsyncComponent(() => import('./StreetView.vue'))
     },
     mounted() {
-        //console.log(this.rig)
+        // console.log(this.token)
         // this.key = this.gmapKey;
     },
     data() {
         return {
             isSidebarVisible : this.isVisible,
+            isPriceHistoryVisible : false,
             // key: null
         }
     },
-    props: ['isVisible','rig', 'rigPrices','gmapKey'],
+    props: ['isVisible','rig', 'rigPrices','gmapKey', 'token'],
     methods: {
         timeAgo(date) {
         const seconds = Math.floor((new Date() - date) / 1000);
@@ -134,6 +138,12 @@ export default {
     openMaps() {
         window.open(`https://www.google.com/maps/search/?api=1&query=${this.rig.latitude},${this.rig.longitude}`);  
     },
+    updatedVisibilityPriceHistory(newVal){
+        this.isPriceHistoryVisible = newVal;
+    },
+    closeSidebar(){
+        this.isSidebarVisible = false;
+    }
 },
     emits: ['updatedVisibility'],
     watch: {
@@ -144,9 +154,9 @@ export default {
             // console.log(this.rigPrices)
         },
         isVisible(newVal){
-            // console.log("prop: ",newVal)
+            console.log("prop: ",newVal)
             this.isSidebarVisible = newVal
-        }
+        },
     },
     created() {
     // this.isSidebarVisible = this.isVisible;

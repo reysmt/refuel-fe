@@ -40,8 +40,8 @@ async function getFilteredRigs(rigsToShow, type){
     }).then(resp => resp.data);
 }
 
-async function getRigPriceHistoryByRigId(rigId){
-    return await axiosRigsInstance().get(`/history/${rigId}`).then(resp => resp.data);
+async function getRigPriceHistoryByRigId(rigId, token){
+    return await axiosRigsInstance(token).get(`/service/history/${rigId}`).then(resp => resp.data);
 }
 
 async function checkReachability(){

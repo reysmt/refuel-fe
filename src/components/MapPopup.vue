@@ -34,7 +34,7 @@
     </div>
 
     <RigDetail v-if="selectedRig != null" :isVisible="detailsVisible" :rig="selectedRig.rig"
-        :rigPrices="selectedRig.rigPrices" @updatedVisibility="updatedVisibility" :gmapKey="gmapKey"></RigDetail>
+        :rigPrices="selectedRig.rigPrices" @updatedVisibility="updatedVisibility" :gmapKey="gmapKey" :token="token"></RigDetail>
 </template>
 
 <script setup>
@@ -70,7 +70,7 @@ export default {
     updated() {
 
     },
-    props: ['popupContent', 'gmapKey'],
+    props: ['popupContent', 'gmapKey', 'token'],
     methods: {
         closePopup() {
             let overlays = this.mapStore.getMap().getOverlays().array_.filter((overlay) => overlay.values_.isPopup === "true")

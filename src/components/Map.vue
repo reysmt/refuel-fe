@@ -2,7 +2,7 @@
   <div id="map" class="map-container border rounded-4" ref="map">
     <!-- <div ref="popup" class="popup"></div> -->
 
-    <MapPopup :popupContent="clickedFeaturesProp" :gmapKey="gmapSession.key" ref="mapPopup"
+    <MapPopup :popupContent="clickedFeaturesProp" :gmapKey="gmapSession.key" :token="authWs.token" ref="mapPopup"
       v-if="mapStore.getMap()!=null" />
 
   </div>
@@ -11,8 +11,8 @@
     :longitude="longitude" :mapObj="mapStore.getMap()" :key="1" ref="position" />
 
   <RigDetail v-if="clickedFeaturesProp != null" :isVisible="showDetails" :rig="clickedFeaturesProp[0].rig"
-    :rigPrices="clickedFeaturesProp[0].rigPrices" @updatedVisibility="updatedVisibility" :gmapKey="gmapSession.key"></RigDetail>
-
+    :rigPrices="clickedFeaturesProp[0].rigPrices" @updatedVisibility="updatedVisibility" :gmapKey="gmapSession.key" :token="authWs.token"></RigDetail>
+<!-- {{ console.log(showDetails) }} -->
   <!-- <div v-if="mapStore.getMap()!=null && isMapLoaded && rigsToShowStore.getLength() > 0">
     <ButtonRig v-for="rig in rigsToShowStore.getRigs()"
     :rig="rig.rig"
