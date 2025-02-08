@@ -1,6 +1,7 @@
 import './assets/custom.css'
 import './assets/bottomNavigationMenu.css'
 import './assets/popup.css'
+import './assets/chart.css'
 // import 'primevue/resources/themes/aura-light-green/theme.css'
 // import 'primevue/resources/themes/aura-light-indigo/theme.css'
 // import 'primevue/resources/themes/aura-light-purple/theme.css'
