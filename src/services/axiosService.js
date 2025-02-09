@@ -40,6 +40,12 @@ function axiosGmapTileReqCheck(session, key){
     })
   }
 
+  function axiosGetGeoIp(){
+    return axios.get(
+        'https://geolocation-db.com/json/',
+    )
+  }
 
-export {axiosRigsInstance, axiosAuthInstance, axiosGmapTileReqCheck, axiosGmapInstance}
+
+export {axiosRigsInstance, axiosAuthInstance, axiosGmapTileReqCheck, axiosGmapInstance, axiosGetGeoIp}
 
