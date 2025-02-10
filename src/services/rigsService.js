@@ -31,6 +31,9 @@ async function getNearbyRigs(latitude, longitude, distanceThreshold, token) {
       }
     )
     .then((resp) => resp.data)
+    .catch(function(error){
+        return error;
+    })
 }
 
 async function getFilteredRigs(rigsToShow, type){

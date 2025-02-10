@@ -119,9 +119,16 @@ export default {
       // status.textContent = "Geolocation is not supported by your browser";
       console.log("Geolocation is not supported by your browser")
       let geoIp = await getGeoIp();
-      this.latitude = geoIp.latitude;
-      this.longitude = geoIp.longitude;
-      this.toast.add({ severity: 'warn', summary: 'Info', detail: 'Per una esperienza migliore, ti consigliamo di attivare la geolocalizzazione.'});
+      if(geoIp.message){
+        //45.468157212316896, 9.182358106761049
+        console.log(geoIp.message)
+        this.latitude = 45.468157212316896;
+        this.longitude = 9.182358106761049;
+      }else{
+        this.latitude = geoIp.latitude;
+        this.longitude = geoIp.longitude;
+      }
+      this.toast.add({ severity: 'warn', summary: 'Info', detail: 'Per una esperienza migliore, ti consigliamo di attivare il servizio di localizzazione.'});
     },
     isMobile() {
       if (screen.width <= 768) {
