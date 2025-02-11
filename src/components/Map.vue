@@ -55,6 +55,7 @@ import {
   Icon,
 } from 'ol/style.js';
 import MapPopup from './MapPopup.vue';
+import { useToast } from "primevue/usetoast";
 // let buttons = ref([])
 let position =ref()
 export default {
@@ -77,7 +78,8 @@ export default {
       clickedFeature: null,
       overlay: null,
       clickedFeaturesProp: null,
-      showDetails: false
+      showDetails: false,
+      toast : useToast()
     }
   },
   async mounted() {
@@ -123,8 +125,6 @@ export default {
       });
       if (this.clickedFeature) {
         // console.log(this.clickedFeature.getGeometry().getCoordinates())
-        
-
         let arrayOfFeatures = this.clickedFeature.values_.features
         let arrayOfRigs = arrayOfFeatures.map((feature) => feature.values_.rig)
         // console.log(arrayOfRigs.map((rig) => rig.rig.flag))
@@ -212,7 +212,11 @@ export default {
         distanceThreshold = 10;
       }
       this.localRigs = await getNearbyRigs(this.mapStore.getMap().getView().getCenter()[1], this.mapStore.getMap().getView().getCenter()[0], distanceThreshold, this.authWs.token)
-      // console.log(this.localRigs)
+      
+      if (this.hasErrors(this.localRigs)){
+        return;
+      }
+
       this.rigsStore.setRigs(this.rigsStore.getRigs().concat(this.localRigs.filter((rig) => this.rigsStore.rigs.map(rig => rig.rig.rigId).indexOf(rig.rig.rigId) < 0)));  //filter duplicates
       this.rigsToShowStore.setRigs(this.rigsStore.getRigs());
       for(let rig of this.rigsToShowStore.getRigs()){
@@ -286,6 +290,22 @@ export default {
         }),
       });
       return style;
+    },
+    hasErrors(error){
+      if(error.response){
+        console.log(error.response);
+        this.toast.add({ severity: 'error', summary: 'Errore', detail: 'Errore di connessione, controlla la connessione internet e riprova.'});
+        return true;
+      } else if (error.request){
+        console.log(error.request);
+        this.toast.add({ severity: 'error', summary: 'Errore', detail: 'Connessione al server non disponibile, riprova più tardi.'});
+        return true;
+      } else if (error.message) {
+        console.log(error.message);
+        this.toast.add({ severity: 'error', summary: 'Errore', detail: 'Errore generico'});
+        return true;
+      }
+      return false;
     },
     getButtons(){
       return this.$refs.buttons;

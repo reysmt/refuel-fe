@@ -25,6 +25,7 @@ import Map from '@/components/Map.vue'
 import Skeleton from 'primevue/skeleton';
 import ProgressSpinner from 'primevue/progressspinner';
 import NavbarMap from '@/components/NavbarMap.vue';
+import { useToast } from "primevue/usetoast";
 </script>
 
 <script>
@@ -35,7 +36,8 @@ import 'swiper/css/pagination';
 import { ref } from 'vue';
 // import required modules
 // import { Pagination } from 'swiper/modules';
-import { getNearbyRigs } from "../services/rigsService";
+import { getGeoIp } from '@/services/geoIpService';
+
 // const mapStore = useMapStore();
 let mapContainer = ref()
 // let cardRig = ref([])
@@ -56,7 +58,8 @@ export default {
       value:null,
       swiperKey:null,
       isRigDetailVisible: false,
-      gmapKey: null
+      gmapKey: null,
+      toast: null
     }
   },
   // setup() {
@@ -79,6 +82,7 @@ export default {
   },
   mounted() {
     // console.log(rigsToShowStore.getRigs().rig)
+    this.toast = useToast()
     this.getGeoFromBrowser();
   },
   watch:{
@@ -110,19 +114,21 @@ export default {
       this.latitude = position.coords.latitude;
       
       console.log("GeoLocated: ",this.latitude + " " + this.longitude)
-
-      // this.showNearbyRigs(this.latitude, this.longitude)
-      // console.log(JSON.parse(JSON.stringify(mapView.value)))
-      
     },
-    geoError(){
+    async geoError(){
       // status.textContent = "Geolocation is not supported by your browser";
       console.log("Geolocation is not supported by your browser")
-    },
-    async showNearbyRigs(latitude, longitude){
-      let rigs = await getNearbyRigs(latitude, longitude, 0.04)
-      this.rigsStore.setRigs(rigs)
-      this.rigsToShowStore.setRigs(this.rigsStore.getRigs())
+      let geoIp = await getGeoIp();
+      if(geoIp.message){
+        //45.468157212316896, 9.182358106761049
+        console.log(geoIp.message)
+        this.latitude = 45.468157212316896;
+        this.longitude = 9.182358106761049;
+      }else{
+        this.latitude = geoIp.latitude;
+        this.longitude = geoIp.longitude;
+      }
+      this.toast.add({ severity: 'warn', summary: 'Info', detail: 'Per una esperienza migliore, ti consigliamo di attivare il servizio di localizzazione.'});
     },
     isMobile() {
       if (screen.width <= 768) {
