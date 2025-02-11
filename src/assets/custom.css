@@ -28,6 +28,10 @@
     margin-bottom: 90px;
 }
 
+.p-toast-message{
+    color: black;
+}
+
 .p-badge{
     font-size: .6rem;
 }
