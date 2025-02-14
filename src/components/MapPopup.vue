@@ -9,7 +9,7 @@
     <div ref="popup" id="popup" class="ol-popup">
         <a href="#" id="popup-closer" class="ol-popup-closer" ref="popup-closer" @click="closePopup"></a>
         <DataTable v-model:selection="selectedRig" :value="popupContent" selectionMode="single" :rows="4" scrollable
-            lazy scrollHeight="400px" @row-select="onRigSelect">
+            lazy scrollHeight="400px" @rowSelect="onRigSelect">
             <Column field="rig.flag" header="Insegna" style="min-width: 1rem; font-size: .8rem;"></Column>
             <Column field="rig.municipality" header="Comune" sortable style="min-width: 1rem; font-size: .8rem;">
             </Column>
@@ -81,6 +81,7 @@ export default {
         },
         onRigSelect() {
             this.detailsVisible = true;
+            console.log(this.detailsVisible)
         },
         updatedVisibility(newVal) {
             this.detailsVisible = newVal
@@ -110,17 +111,6 @@ export default {
         }
     },
     watch: {
-        popupContent: function (val) {
-            if (val != null) {
-                // console.log(val.length)
-                if (val.length < 2) {
-                    // console.log(val[0])
-                    this.selectedRig = val[0];
-                    this.onRigSelect();
-                }
-                // this.preparePopup();
-            }
-        }
     }
 }
 </script>

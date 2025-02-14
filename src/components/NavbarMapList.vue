@@ -12,7 +12,7 @@
                 </Column>
             </DataTable>
 
-            <RigDetail v-if="genericRig!=null && isRigDetailVisible" :isVisible="isRigDetailVisible" :rig="genericRig.rig" :rigPrices="genericRig.rigPrices" @updatedVisibility="updatedVisibility" :gmapKey="gmapKey"></RigDetail>
+            <!-- <RigDetail v-if="genericRig!=null && isRigDetailVisible" :isVisible="isRigDetailVisible" :rig="genericRig.rig" :rigPrices="genericRig.rigPrices" @updatedVisibility="updatedVisibility" :gmapKey="gmapKey"></RigDetail> -->
 
             <!-- <DataView :value="rigsStore.getRigs()">
                 <template #list="slotProps">

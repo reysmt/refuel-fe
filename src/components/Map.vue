@@ -10,8 +10,6 @@
   <YourPosition v-if="mapStore.getMap()!=null && isMapLoaded" :popupContent="'blank'" :latitude="latitude"
     :longitude="longitude" :mapObj="mapStore.getMap()" :key="1" ref="position" />
 
-  <RigDetail v-if="clickedFeaturesProp != null" :isVisible="showDetails" :rig="clickedFeaturesProp[0].rig"
-    :rigPrices="clickedFeaturesProp[0].rigPrices" @updatedVisibility="updatedVisibility" :gmapKey="gmapSession.key" :token="authWs.token"></RigDetail>
 <!-- {{ console.log(showDetails) }} -->
   <!-- <div v-if="mapStore.getMap()!=null && isMapLoaded && rigsToShowStore.getLength() > 0">
     <ButtonRig v-for="rig in rigsToShowStore.getRigs()"
@@ -118,8 +116,6 @@ export default {
           },
         },
       });
-      this.overlay.set("isPopup", "true");
-      this.mapStore.getMap().addOverlay(this.overlay)
       this.clickedFeature = e == null ? null : this.mapStore.getMap().forEachFeatureAtPixel(e.pixel, function (feature) {
         return feature;
       });
@@ -127,13 +123,9 @@ export default {
         // console.log(this.clickedFeature.getGeometry().getCoordinates())
         let arrayOfFeatures = this.clickedFeature.values_.features
         let arrayOfRigs = arrayOfFeatures.map((feature) => feature.values_.rig)
-        // console.log(arrayOfRigs.map((rig) => rig.rig.flag))
-        this.clickedFeaturesProp = arrayOfRigs//arrayOfRigs
-        if(this.clickedFeaturesProp.length < 2){
-          // console.log(this.clickedFeaturesProp)
-          this.showDetails = true;
-          return
-        }
+        this.clickedFeaturesProp = arrayOfRigs
+        this.overlay.set("isPopup", "true");
+        this.mapStore.getMap().addOverlay(this.overlay)
         this.overlay.setPosition(this.clickedFeature.getGeometry().getCoordinates())
       } else {
         this.mapStore.getMap().removeOverlay(this.overlay)

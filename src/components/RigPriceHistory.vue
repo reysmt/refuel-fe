@@ -85,7 +85,7 @@ export default {
                 dataMap.get(key).data.push(rig.price.toFixed(2));
             });
             this.datasets = Array.from(dataMap.values())
-            console.log(this.datasets)
+            // console.log(this.datasets)
             // console.log(this.datasetInfo)
             this.chartData = {
                 labels: labels,
@@ -120,7 +120,7 @@ export default {
             
         },
         rig(newVal) {
-            console.log(newVal)
+            // console.log(newVal)
         },
         isSidebarVisible(newVal) {
             // console.log(newVal);
