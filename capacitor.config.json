@@ -1,10 +1,9 @@
 {
   "appId": "com.les.projects",
-  "appName": "refuel-app",
+  "appName": "Refuel",
   "webDir": "dist",
   "server" : {
-    "androidScheme" : "https",
-    "cleartext" : true
+    "androidScheme" : "https"
   },
   "android" : {
     "allowMixedContent" : true

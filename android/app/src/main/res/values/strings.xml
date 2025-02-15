@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">refuel-app</string>
-    <string name="title_activity_main">refuel-app</string>
+    <string name="app_name">Refuel</string>
+    <string name="title_activity_main">Refuel</string>
     <string name="package_name">com.les.projects</string>
     <string name="custom_url_scheme">com.les.projects</string>
 </resources>
