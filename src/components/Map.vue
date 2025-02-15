@@ -41,7 +41,7 @@ import {ref } from 'vue';
 import {containsCoordinate} from 'ol/extent';
 import googleMapService from '@/services/googleMapService';
 // import ButtonRig from './ButtonRig.vue';
-
+import { SplashScreen } from '@capacitor/splash-screen';
 import Feature from 'ol/Feature.js';
 import {Cluster, Vector as VectorSource} from 'ol/source.js';
 import {Vector as VectorLayer} from 'ol/layer.js';
@@ -311,6 +311,7 @@ export default {
     setMapLoaded(){
       this.isMapLoaded=true;
       this.manageOverlay(null)
+      SplashScreen.hide();
       // console.log("map loaded")
     },
     getIsMapLoaded(){
