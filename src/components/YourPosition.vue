@@ -7,7 +7,8 @@
         </div>
     </div> -->
     <!-- <button type="button" class="btn btn-secondary btn-sm rounded" ref="popup"> -->
-        <i class="bi bi-geo-fill position" ref="popup" style="color: white;"></i>
+        <i class="pi pi-map-marker" ref="popup" style="color: white;"></i>
+        
     <!-- </button> -->
     
 </template>
