@@ -1,0 +1,36 @@
+.p-toast-message{
+    color: black;
+}
+
+.p-badge{
+    font-size: .6rem;
+}
+
+.p-button{
+    font-size: .7rem;
+}
+
+.p-image-action.p-link{
+    display: none;
+}
+
+.p-image-action.p-link:last-child{
+    display: initial;
+    position: absolute;
+    z-index: 999;
+    top: 0;
+    left: 0;
+}
+
+.p-badge{
+    grid-row: 2;
+    margin: 0;
+    padding: 0 .1rem;
+    border-radius: 5px;
+}
+
+.p-button-icon{
+    grid-row: 1;
+    margin: 0;
+    margin-bottom: .2rem;
+}

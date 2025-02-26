@@ -1,0 +1,22 @@
+.street-view-section{
+    /* margin: auto; */
+    width: 100%;
+    border: #e5e7eb solid 1px;
+    padding: 10px;
+    height: 10vh;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    z-index: 0;
+}
+
+.street-view{
+    height: 100vh;
+    width: 100vw;
+    z-index: 0;
+}
+
+.street-view-image-static{
+    filter: blur(4px);
+}
