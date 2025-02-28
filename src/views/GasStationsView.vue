@@ -37,7 +37,7 @@ import { ref } from 'vue';
 // import required modules
 // import { Pagination } from 'swiper/modules';
 import { getGeoIp } from '@/services/geoIpService';
-
+import { Geolocation } from '@capacitor/geolocation';
 // const mapStore = useMapStore();
 let mapContainer = ref()
 // let cardRig = ref([])
@@ -80,10 +80,11 @@ export default {
       }
     }
   },
-  mounted() {
+  async mounted() {
     // console.log(rigsToShowStore.getRigs().rig)
     this.toast = useToast()
-    this.getGeoFromBrowser();
+    // this.getGeoFromBrowser();
+    await this.getGeoFromCapacitor();
   },
   watch:{
     // selectedRigType: function(val){
@@ -108,6 +109,19 @@ export default {
       if(navigator.geolocation){
         navigator.geolocation.getCurrentPosition(this.geoSuccess, this.geoError);
       }
+    },
+    async getGeoFromCapacitor(){
+      const position = await Geolocation.getCurrentPosition().then((position) => {
+        return position;
+      }).catch((error) => {
+        console.log(error)
+        this.geoError();
+        return null;
+      });
+      if(position == null){
+        return;
+      }
+      this.geoSuccess(position);
     },
     geoSuccess(position) {
       this.longitude = position.coords.longitude;
