@@ -4,14 +4,14 @@
 
         <!-- <StreetView :longitude="rig.longitude" :latitude="rig.latitude" @click="slotProps.onClick" /> -->
         <div>
-            <Fieldset :legend="rig.flag" style="padding-top: 0; padding-bottom: 0rem; margin-bottom: .5rem;">
+            <FieldsetPv :legend="rig.flag" style="padding-top: 0; padding-bottom: 0rem; margin-bottom: .5rem;">
                 <span class="font-small p-text-secondary">Gestore:</span> <br>
                 {{ rig.manager }}
                 <Divider style="margin-top: .8rem; margin-bottom: .8rem;" />
                 <span class="font-small p-text-secondary">Indirizzo:</span><br>
                 <div>{{ rig.address }}, {{ rig.municipality }}</div>
-            </Fieldset>
-            <Image alt="Image" preview class="street-view-section">
+            </FieldsetPv>
+            <ImagePv alt="Image" preview class="street-view-section">
                 <template #image>
                     <StreetViewStaticImage :longitude="rig.longitude" :latitude="rig.latitude" :gKey="gmapKey">
                     </StreetViewStaticImage>
@@ -22,7 +22,7 @@
                     <StreetView :longitude="rig.longitude" :latitude="rig.latitude" :gmapKey="gmapKey"
                         @click="slotProps.onClick" />
                 </template>
-            </Image>
+            </ImagePv>
             <!-- <Divider style="margin-top: .8rem; margin-bottom: .8rem;" /> -->
             <DataTable :value="rigPrices" sortField="price" :sortOrder="1" showGridlines stripedRows scrollable
                 scrollHeight="300px" tableStyle="min-width: auto" style="margin-top: .5rem;">
@@ -49,32 +49,41 @@
             </DataTable>
             <Divider style="margin-top: .8rem; margin-bottom: .8rem;" />
             <div class="">
-                <Button type="button" label="Vai" @click="openMaps()" style="margin-right: 10px;"></Button>
+                <ButtonPv type="button" label="Vai" @click="openMaps()" style="margin-right: 10px;"></ButtonPv>
                 <!-- <Button type="button" severity="info" label="Storico" @click="isPriceHistoryVisible = !isPriceHistoryVisible"  -->
                  <!-- style="margin-right: 10px;"></Button> -->
-                <Button type="button" label="Chiudi" severity="secondary" @click="closeSidebar()"
-                    style="margin-right: 10px;"></Button>
+                <ButtonPv type="button" label="Chiudi" severity="secondary" @click="closeSidebar()"
+                    style="margin-right: 10px;"></ButtonPv>
             </div>
         </div>
     </Sidebar>
     <RigPriceHistory :isVisible="isPriceHistoryVisible" :rig="rig" :token="token" @updatedVisibility="updatedVisibilityPriceHistory"></RigPriceHistory>
 </template>
 <script setup>
-import Image from 'primevue/image';
-import Fieldset from 'primevue/fieldset';
+
+</script>
+<script>
+import ImagePv from 'primevue/image';
+import FieldsetPv from 'primevue/fieldset';
 import Divider from 'primevue/divider';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import Button from 'primevue/button';
+import ButtonPv from 'primevue/button';
 import Sidebar from 'primevue/sidebar';
 import { defineAsyncComponent, ref} from 'vue';
 import RigPriceHistory from './RigPriceHistory.vue';
-</script>
-<script>
 export default {
     components: {
         StreetViewStaticImage: defineAsyncComponent(() => import('./StreetViewStaticImage.vue')),
-        StreetView : defineAsyncComponent(() => import('./StreetView.vue'))
+        StreetView : defineAsyncComponent(() => import('./StreetView.vue')),
+        ImagePv,
+        FieldsetPv,
+        Divider,
+        DataTable,
+        Column,
+        ButtonPv,
+        Sidebar,
+        RigPriceHistory
     },
     mounted() {
         // console.log(this.token)

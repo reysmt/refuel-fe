@@ -38,9 +38,8 @@
 </template>
 
 <script setup>
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import Tag from 'primevue/tag';
+
+
 </script>
 
 <script>
@@ -48,8 +47,15 @@ import RigDetail from '@/components/RigDetail.vue';
 // import { toStringHDMS } from 'ol/coordinate.js';
 import { useRigsTypeStore } from '@/stores/rigs';
 import { useMapStore } from '@/stores/googleMap';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 import "ol/ol.css";
 export default {
+    components:{
+        RigDetail,
+        DataTable,
+        Column
+    },
     data() {
         return {
             popup: null,

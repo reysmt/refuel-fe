@@ -11,15 +11,21 @@
   <NavbarMapInfo :isVisible="displayInfo" @updatedVisibility="updatedVisibilityInfo"></NavbarMapInfo>
 </template>
 <script setup>
+</script>
+<script>
 // import Dock from 'primevue/dock';
 import { ref } from 'vue';
 // import NavbarMapList from './NavbarMapList.vue';
 import NavbarMapFilter from './NavbarMapFilter.vue';
 import NavbarMapInfo from './NavbarMapInfo.vue';
 import { useMapStore } from '@/stores/googleMap';
-</script>
-<script>
 export default {
+  components: {
+    // Dock,
+    // NavbarMapList,
+    NavbarMapFilter,
+    NavbarMapInfo
+  },
   data(){
     return{
       displayList: false,
