@@ -1,34 +1,17 @@
 <template>
-    <!-- <div id="popup" class="ol-popup" ref="popup">
-        <a href="#" id="popup-closer" class="ol-popup-closer" ref="popup-closer"
-            v-html="popupCloser"></a>
-        <div id="popupContent" ref="popupContent">
-            <p>You clicked here:</p><code>{{ popupContent }}</code>
-        </div>
-    </div> -->
     <div ref="popup" id="popup" class="ol-popup">
         <a href="#" id="popup-closer" class="ol-popup-closer" ref="popup-closer" @click="closePopup"></a>
-        <DataTable v-model:selection="selectedRig" :value="popupContent" selectionMode="single" :rows="4" scrollable
-            lazy scrollHeight="400px" @rowSelect="onRigSelect">
-            <Column field="rig.flag" header="Insegna" style="min-width: 1rem; font-size: .8rem;"></Column>
-            <Column field="rig.municipality" header="Comune" sortable style="min-width: 1rem; font-size: .8rem;">
-            </Column>
-            <Column field="rigPrices" header="Prezzo" style="min-width: 1rem; font-size: .8rem; white-space: nowrap; padding-right: .5rem;">
-                <template #body="slotProps">
-                    {{ showPrice(slotProps) }} €/Lt
-                </template>
-            </Column>
+        {{ console.log(processedRigs) }}
+        <DataTable v-model:selection="selectedRig" :value="processedRigs" selectionMode="single" :rows="4" scrollable
+            scrollHeight="400px" @rowSelect="onRigSelect">
+            <Column field="rig.flag" header="Insegna" sortable style="min-width: 1rem; font-size: .8rem;"></Column>
+            <Column field="rig.municipality" header="Comune" sortable style="min-width: 1rem; font-size: .8rem;"></Column>
+            <Column field="priceToShow" header="Prezzo" sortable style="min-width: 1rem; font-size: .8rem; white-space: nowrap; padding-right: .5rem;"></Column>
             <Column field="" header="" style="padding: 0;">
                 <template #body>
                     <i class="pi pi-info-circle"></i>
                 </template>
             </Column>
-            <!-- <Column field="" header="" style="min-width: 1rem">
-                <template #body="{data}">
-                        <Button type="button" label="Dettagli"></Button>
-                        
-                    </template>
-            </Column> -->
         </DataTable>
 
     </div>
@@ -55,6 +38,15 @@ export default {
         RigDetail,
         DataTable,
         Column
+    },
+    computed: {
+        processedRigs(){
+            return this.popupContent!= null ? this.popupContent.map(rigs => ({
+                ...rigs,
+                rigPrices: rigs.rigPrices,
+                priceToShow: this.showDesiredPrice(rigs)
+            })) : []
+        }
     },
     data() {
         return {
@@ -92,7 +84,7 @@ export default {
         updatedVisibility(newVal) {
             this.detailsVisible = newVal
         },
-        showPrice(slotProps) {
+        showDesiredPrice(slotProps) {
             let price;
             // console.log(this.rigsTypeStore.getType())
             // console.log(slotProps.data.rigPrices)
@@ -100,12 +92,12 @@ export default {
             // console.log(this.filterPrice(slotProps.data.rigPrices, this.rigsTypeStore.getType()))
 
             if(this.rigsTypeStore.getType() != null){
-                price = this.filterPrice(slotProps.data.rigPrices, this.rigsTypeStore.getType())
+                price = this.filterPrice(slotProps.rigPrices, this.rigsTypeStore.getType())
                 if(Array.isArray(price) && price.length > 0){
-                    price = price[0].price.toFixed(2)
+                    price = price[0].price.toFixed(2) + (this.rigsTypeStore.getType().toLowerCase() == "metano" ? " €/Kg" : " €/Lt")
                 }
             }else{
-                price = slotProps.data.rigPrices[0].price.toFixed(2) 
+                price = slotProps.rigPrices[0].price.toFixed(2) + " €/Lt"
             }
             // console.log(price)
             return price;
@@ -114,7 +106,19 @@ export default {
         filterPrice(rigPrices ,rigType){
             // console.log(rigPrices.filter(price => price.rigFuelType.rigFuelTypeDescription.toLowerCase() == rigType.toLowerCase()))
             return rigPrices.filter(price => price.rigFuelType.rigFuelTypeDescription.toLowerCase() == rigType.toLowerCase())
-        }
+        },
+        sortPrices(event) {
+            event.data.sort((a, b) => {
+                const priceA = this.getPriceValue(a.rigPrices);
+                const priceB = this.getPriceValue(b.rigPrices);
+                console.log(priceA, priceB)
+                return (priceA - priceB) * (event.order === 1 ? 1 : -1);
+            });
+        },
+        getPriceValue(prices) {
+            if (!prices || prices.length === 0) return Number.MAX_VALUE; // Se non ci sono prezzi, mettiamo in fondo
+            return Math.min(...prices.map(p => p.price)); // Usa il prezzo minimo per ordinare
+        },
     },
     watch: {
     }
