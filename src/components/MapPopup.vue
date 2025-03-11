@@ -1,7 +1,6 @@
 <template>
     <div ref="popup" id="popup" class="ol-popup">
         <a href="#" id="popup-closer" class="ol-popup-closer" ref="popup-closer" @click="closePopup"></a>
-        {{ console.log(processedRigs) }}
         <DataTable v-model:selection="selectedRig" :value="processedRigs" selectionMode="single" :rows="4" scrollable
             scrollHeight="400px" @rowSelect="onRigSelect">
             <Column field="rig.flag" header="Insegna" sortable style="min-width: 1rem; font-size: .8rem;"></Column>
@@ -13,7 +12,6 @@
                 </template>
             </Column>
         </DataTable>
-
     </div>
 
     <RigDetail v-if="selectedRig != null" :isVisible="detailsVisible" :rig="selectedRig.rig"
@@ -79,7 +77,6 @@ export default {
         },
         onRigSelect() {
             this.detailsVisible = true;
-            console.log(this.detailsVisible)
         },
         updatedVisibility(newVal) {
             this.detailsVisible = newVal
@@ -106,14 +103,6 @@ export default {
         filterPrice(rigPrices ,rigType){
             // console.log(rigPrices.filter(price => price.rigFuelType.rigFuelTypeDescription.toLowerCase() == rigType.toLowerCase()))
             return rigPrices.filter(price => price.rigFuelType.rigFuelTypeDescription.toLowerCase() == rigType.toLowerCase())
-        },
-        sortPrices(event) {
-            event.data.sort((a, b) => {
-                const priceA = this.getPriceValue(a.rigPrices);
-                const priceB = this.getPriceValue(b.rigPrices);
-                console.log(priceA, priceB)
-                return (priceA - priceB) * (event.order === 1 ? 1 : -1);
-            });
         },
         getPriceValue(prices) {
             if (!prices || prices.length === 0) return Number.MAX_VALUE; // Se non ci sono prezzi, mettiamo in fondo
