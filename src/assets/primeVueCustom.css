@@ -10,16 +10,8 @@
     font-size: .7rem;
 }
 
-.p-image-action.p-link{
-    display: none;
-}
-
-.p-image-action.p-link:last-child{
-    display: initial;
-    position: absolute;
-    z-index: 999;
-    top: 0;
-    left: 0;
+.p-image-action.p-link:not(:last-child){
+        display: none;
 }
 
 .p-badge{

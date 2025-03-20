@@ -12,12 +12,7 @@
     "SplashScreen": {
       "launchAutoHide": false,
       "androidSplashResourceName": "splash",
-      "androidScaleType": "FIT_CENTER",
-      "showSpinner": true,
-      "androidSpinnerStyle": "large",
-      "iosSpinnerStyle": "small",
-      "spinnerColor": "#999999",
-      "splashFullScreen": true,
+      "androidScaleType": "CENTER_CROP",
       "layoutName": "launch_screen"
     }
   }
