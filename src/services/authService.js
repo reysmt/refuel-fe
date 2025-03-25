@@ -17,6 +17,9 @@ async function authenticate(username, password){
         username : username,
         password: password
     }).then(resp => resp.data)
+    .catch(function(error){
+        return error;
+    })
 }
 
 export{validate, authenticate, info}

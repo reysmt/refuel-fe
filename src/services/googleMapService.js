@@ -46,7 +46,11 @@ async function checkSessionMapTiles(session, key){
 }
 
 async function getLastValidSession(token){
-  return await axiosGmapInstance(token).get('/getSession').then(resp => resp.data);
+  return await axiosGmapInstance(token).get('/getSession')
+    .then(resp => resp.data)
+    .catch(function(error){
+    return error;
+});
 }
 
 export default {loadGoogleMaps, checkSessionMapTiles, getLastValidSession};

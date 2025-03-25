@@ -139,10 +139,16 @@ export default {
     },
     async getGmapSession(token) {
       this.gmapSession = await googleMapService.getLastValidSession(token);
+      if(this.hasErrors(this.gmapSession)) {
+        return;
+      }
       // console.log(this.gmapSession)
     },
     async auth() {
       this.authWs = await authenticate('refuel', 'refuelistheway')
+      if(this.hasErrors(this.authWs)) {
+        return;
+      }
       // console.log(this.authWs.token)
     },
     async showAndClusterizePopups() {
@@ -292,7 +298,7 @@ export default {
     hasErrors(error) {
       if (error.response) {
         console.log(error.response);
-        this.toast.add({ severity: 'error', summary: 'Errore', detail: 'Errore di connessione, controlla la connessione internet e riprova.' });
+        this.toast.add({ severity: 'error', summary: 'Errore', detail: 'Errore interno, qualcosa è andato storto, riprova più tardi.' });
         return true;
       } else if (error.request) {
         console.log(error.request);

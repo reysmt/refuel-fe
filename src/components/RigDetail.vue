@@ -50,7 +50,7 @@
             <Divider style="margin-top: .8rem; margin-bottom: .8rem;" />
             <div class="">
                 <ButtonPv type="button" label="Vai" @click="openMaps()" style="margin-right: 10px;"></ButtonPv>
-                <!-- <Button type="button" severity="info" label="Storico" @click="isPriceHistoryVisible = !isPriceHistoryVisible"  -->
+                 <!-- <ButtonPv type="button" severity="info" label="Storico" @click="isPriceHistoryVisible = !isPriceHistoryVisible"> </ButtonPv> -->
                  <!-- style="margin-right: 10px;"></Button> -->
                 <ButtonPv type="button" label="Chiudi" severity="secondary" @click="closeSidebar()"
                     style="margin-right: 10px;"></ButtonPv>

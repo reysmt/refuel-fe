@@ -1,5 +1,8 @@
 .loading-div{
     height: 100%;
+    width: 100%;
+    position: absolute;
+    z-index: 2;
 }
 
 .loading-spinner{
