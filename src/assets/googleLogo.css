@@ -3,7 +3,7 @@
     bottom:10px;
     right: 10px;
     width: 15vw;
-    z-index: 1000; /* Assicura che sia visibile sopra la mappa */
+    z-index: 1; /* Assicura che sia visibile sopra la mappa */
 }
 
 
