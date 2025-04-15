@@ -19,6 +19,7 @@ export const useMapStore = defineStore('map', {
       async initMap(ref, session, key){
         this.map = new Map({
           target: ref,
+          controls: [],
           layers: [
             new TileLayer({
               preload: Infinity,
