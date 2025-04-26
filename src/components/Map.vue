@@ -50,7 +50,6 @@ export default {
       isMapLoaded: false,
       authWs: null,
       gmapSession: null,
-      // features: [],
       vectorSource: null,
       clusterSource: null,
       clusters: null,
@@ -61,13 +60,12 @@ export default {
       toast: useToast(),
       networkStatus: null,
       networkType: null,
+      interval: null
     }
   },
   emits: ['getIsMapLoaded'],
   async mounted() {
-    await this.auth();
-    await this.getGmapSession(this.authWs.token);
-    await this.mapStore.initMap(this.$refs.map, this.gmapSession.session, this.gmapSession.key)
+    await this.mainAuth();
     this.setZoomAndPosition();
     this.dragMap();
     this.postRenderMap()
@@ -97,6 +95,11 @@ export default {
   updated() {
   },
   methods: {
+    async mainAuth(){
+      await this.auth();
+      await this.getGmapSession(this.authWs.token);
+      await this.mapStore.initMap(this.$refs.map, this.gmapSession.session, this.gmapSession.key)
+    },
     checkNetworkStatus() {
       Network.addListener('networkStatusChange', networkStatus => {
         const { connected, connectionType } = networkStatus;
@@ -149,7 +152,6 @@ export default {
       if(this.hasErrors(this.authWs)) {
         return;
       }
-      // console.log(this.authWs.token)
     },
     async showAndClusterizePopups() {
       this.removeClusterizedPopups();
@@ -218,6 +220,7 @@ export default {
       this.localRigs = await getNearbyRigs(this.mapStore.getMap().getView().getCenter()[1], this.mapStore.getMap().getView().getCenter()[0], distanceThreshold, this.authWs.token)
 
       if (this.hasErrors(this.localRigs)) {
+        await this.retry();
         return;
       }
 
@@ -298,15 +301,15 @@ export default {
     hasErrors(error) {
       if (error.response) {
         console.log(error.response);
-        this.toast.add({ severity: 'error', summary: 'Errore', detail: 'Errore interno, qualcosa è andato storto, riprova più tardi.' });
+        this.toast.add({ severity: 'error', summary: 'Errore', detail: 'Errore interno, qualcosa è andato storto, riprova più tardi.', life: 5000 });
         return true;
       } else if (error.request) {
         console.log(error.request);
-        this.toast.add({ severity: 'error', summary: 'Errore', detail: 'Connessione al server non disponibile, riprova più tardi.' });
+        this.toast.add({ severity: 'error', summary: 'Errore', detail: 'Connessione al server non disponibile, verifica la connessione internet oppure riprova più tardi.', life: 5000 });
         return true;
       } else if (error.message) {
         console.log(error.message);
-        this.toast.add({ severity: 'error', summary: 'Errore', detail: 'Errore generico' });
+        this.toast.add({ severity: 'error', summary: 'Errore', detail: 'Errore generico', life: 5000 });
         return true;
       }
       return false;
@@ -338,6 +341,19 @@ export default {
     },
     getIsMapLoaded() {
       return this.isMapLoaded;
+    },
+    async retry(){
+        //let retryApisCall = async () => {
+        //  this.toast.add({ severity: 'warn', summary: 'Info', detail: 'Tentativo di connessione in corso.', life: 3000 });
+        //  await this.mainAuth();
+        //}
+        //return setInterval(retryApisCall, 10000);
+        await this.mainAuth();
+    },
+    async executeRetryInterval(){
+        if(this.interval  == null){
+            this.interval = await this.retry();
+        }
     }
   }
 }

@@ -17,21 +17,35 @@ export const useMapStore = defineStore('map', {
         return this.map;
       },
       async initMap(ref, session, key){
-        this.map = new Map({
-          target: ref,
-          controls: [],
-          layers: [
-            new TileLayer({
-              preload: Infinity,
-              source: new XYZ({url: 'https://tile.googleapis.com/v1/2dtiles/{z}/{x}/{y}?session=' + session + '&key=' + key})
-            })
-          ],
-          view: new View({
-            center: [0, 0],
-            zoom: 1
-            // extent: [306639.36, 610955.18, 4005074.92, 16.23393462821139]
+        let layer = new TileLayer({
+          preload: Infinity,
+          source: new XYZ({
+            url:
+              'https://tile.googleapis.com/v1/2dtiles/{z}/{x}/{y}?session=' +
+              session +
+              '&key=' +
+              key
           })
-        })
+        });
+        if(!this.map){
+          this.map = new Map({
+            target: ref,
+            controls: [],
+            layers: [ layer],
+            view: new View({
+              center: [0, 0],
+              zoom: 1
+              // extent: [306639.36, 610955.18, 4005074.92, 16.23393462821139]
+            })
+          })
+        }else{
+          this.map.getLayers().forEach(layer => {
+            if (layer instanceof TileLayer) {
+              this.map.removeLayer(layer);
+            }
+          });
+          this.map.addLayer(layer);
+        }
         useGeographic() //make the map view uses geographic coordinates even if the view projection is not geographic
       }
     }
