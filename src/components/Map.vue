@@ -66,19 +66,6 @@ export default {
   emits: ['getIsMapLoaded'],
   async mounted() {
     await this.mainAuth();
-    this.setZoomAndPosition();
-    this.dragMap();
-    this.postRenderMap()
-    this.singleClickEvent();
-    this.checkNetworkStatus();
-    this.rigsTypeStore.$subscribe(() => {
-      // this.removeOverlays();
-      // console.log(this.rigsTypeStore.getType())
-      // console.log(this.mapStore.getMap().getLayers().getArray())
-      this.mapStore.getMap().removeOverlay(this.overlay);
-      this.clickedFeaturesProp = null;
-      this.reloadOverlaysRigs();
-    });
   },
   watch: {
     networkStatus(val) {
@@ -98,7 +85,23 @@ export default {
     async mainAuth(){
       await this.auth();
       await this.getGmapSession(this.authWs.token);
+      if(this.gmapSession.session == undefined || this.gmapSession.key == undefined) {
+        return;
+      }
       await this.mapStore.initMap(this.$refs.map, this.gmapSession.session, this.gmapSession.key)
+      this.setZoomAndPosition();
+      this.dragMap();
+      this.postRenderMap()
+      this.singleClickEvent();
+      this.checkNetworkStatus();
+      this.rigsTypeStore.$subscribe(() => {
+        // this.removeOverlays();
+        // console.log(this.rigsTypeStore.getType())
+        // console.log(this.mapStore.getMap().getLayers().getArray())
+        this.mapStore.getMap().removeOverlay(this.overlay);
+        this.clickedFeaturesProp = null;
+        this.reloadOverlaysRigs();
+      });
     },
     checkNetworkStatus() {
       Network.addListener('networkStatusChange', networkStatus => {
@@ -192,7 +195,7 @@ export default {
     },
     setZoomAndPosition() {
       this.mapStore.getMap().getView().setCenter([this.longitude, this.latitude]);
-      this.mapStore.getMap().getView().setZoom(this.mapStore.getMap().getView().getZoom() + 13);
+      this.mapStore.getMap().getView().setZoom(14);
     },
     //useless if useGeographic() is used
     convertOsmCoordinatesToGmCoordinates(coordinates) {
@@ -220,7 +223,6 @@ export default {
       this.localRigs = await getNearbyRigs(this.mapStore.getMap().getView().getCenter()[1], this.mapStore.getMap().getView().getCenter()[0], distanceThreshold, this.authWs.token)
 
       if (this.hasErrors(this.localRigs)) {
-        await this.retry();
         return;
       }
 
@@ -298,20 +300,35 @@ export default {
       });
       return style;
     },
-    hasErrors(error) {
-      if (error.response) {
-        console.log(error.response);
+    hasErrors(api) {
+      if (api.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+        console.log(api.response);
         this.toast.add({ severity: 'error', summary: 'Errore', detail: 'Errore interno, qualcosa è andato storto, riprova più tardi.', life: 5000 });
+        this.executeRetryInterval();
         return true;
-      } else if (error.request) {
-        console.log(error.request);
+      } else if (api.request) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+      // http.ClientRequest in node.js
+        console.log(api.request);
         this.toast.add({ severity: 'error', summary: 'Errore', detail: 'Connessione al server non disponibile, verifica la connessione internet oppure riprova più tardi.', life: 5000 });
+        this.executeRetryInterval();
         return true;
-      } else if (error.message) {
-        console.log(error.message);
+      } else if (api.message) {
+      // Something happened in setting up the request that triggered an Error
+        console.log(api.message);
         this.toast.add({ severity: 'error', summary: 'Errore', detail: 'Errore generico', life: 5000 });
         return true;
       }
+
+      if(this.interval != null) {
+        this.toast.add({ severity: 'success', summary: 'Info', detail: 'Connessione ripristinata.', life: 3000 });
+      }
+      clearInterval(this.interval);
+      this.interval = null;
+
       return false;
     },
     getButtons() {
@@ -343,12 +360,12 @@ export default {
       return this.isMapLoaded;
     },
     async retry(){
-        //let retryApisCall = async () => {
-        //  this.toast.add({ severity: 'warn', summary: 'Info', detail: 'Tentativo di connessione in corso.', life: 3000 });
-        //  await this.mainAuth();
-        //}
-        //return setInterval(retryApisCall, 10000);
-        await this.mainAuth();
+        let retryApisCall = async () => {
+         this.toast.add({ severity: 'warn', summary: 'Info', detail: 'Tentativo di connessione in corso.', life: 3000 });
+         await this.mainAuth();
+         this.reloadOverlaysRigs();
+        }
+        return setInterval(retryApisCall, 10000);
     },
     async executeRetryInterval(){
         if(this.interval  == null){
