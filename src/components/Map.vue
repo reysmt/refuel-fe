@@ -8,7 +8,10 @@
   <img src="../../google_logo/google_logo/android/res/drawable-xxxhdpi/google_on_non_white.png" class="google-logo" />
   <YourPosition v-if="mapStore.getMap() != null && isMapLoaded" :popupContent="'blank'" :latitude="latitude"
     :longitude="longitude" :mapObj="mapStore.getMap()" :key="1" ref="position" />
-
+    <div class="loading-spinner" v-if="!areRigsLoaded">
+    <ProgressSpinner style="width: 50px; height: 50px; z-index:999;" strokeWidth="100" fill="var(--surface-ground)"
+      animationDuration=".9s" aria-label="Custom ProgressSpinner" />
+  </div>
 </template>
 <script>
 import { Network } from '@capacitor/network';
@@ -33,12 +36,14 @@ import {
 } from 'ol/style.js';
 import MapPopup from './MapPopup.vue';
 import { useToast } from "primevue/usetoast";
+import ProgressSpinner from 'primevue/progressspinner';
 export default {
   name: "mapContainer",
   props: ['rigs', 'longitude', 'latitude'],
   components: {
     YourPosition,
-    MapPopup
+    MapPopup,
+    ProgressSpinner
   },
   data() {
     return {
@@ -60,7 +65,8 @@ export default {
       toast: useToast(),
       networkStatus: null,
       networkType: null,
-      interval: null
+      interval: null,
+      areRigsLoaded: false,
     }
   },
   emits: ['getIsMapLoaded'],
@@ -222,6 +228,8 @@ export default {
       }
       this.localRigs = await getNearbyRigs(this.mapStore.getMap().getView().getCenter()[1], this.mapStore.getMap().getView().getCenter()[0], distanceThreshold, this.authWs.token)
 
+      this.areRigsLoaded = true;
+
       if (this.hasErrors(this.localRigs)) {
         return;
       }
@@ -242,6 +250,18 @@ export default {
         this.rigsToShowStore.setRigs(this.rigsStore.getRigs())
       }
       // console.log(this.rigsToShowStore.getRigs())
+      if(this.rigsToShowStore.getRigs().length <= 0) {
+        let countryObj = await googleMapService.getReverseGeocoding(this.latitude, this.longitude, this.gmapSession.key);
+        countryObj = countryObj.results[0].address_components.find(comp =>
+          comp.types.includes('country'));
+        if(countryObj){
+          if(countryObj.long_name != "Italy"){
+            this.toast.add({ severity: 'warn', summary: 'Info', detail: 'Questa applicazione è disponibile solo in ITALIA. Al momento non ci sono stazioni di servizio visualizzabili nella tua area geografica.', life: 5000 });
+            return;
+          }
+        }
+        this.toast.add({ severity: 'warn', summary: 'Info', detail: 'Nessuna stazione di rifornimento trovata nelle tue vicinanze.', life: 5000 });
+      }
     },
     setupOverlays(map) {
       let extent = map.getView().calculateExtent(map.getSize().map(i => i + 50));

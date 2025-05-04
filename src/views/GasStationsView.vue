@@ -11,10 +11,6 @@
     </div>
     <NavbarMap :gmapKey="gmapKey" :longitude="longitude" :latitude="latitude"></NavbarMap>
   </div>
-  <div class="loading-spinner" v-if="rigsToShowStore.getLength() == 0">
-    <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="100" fill="var(--surface-ground)"
-      animationDuration=".9s" aria-label="Custom ProgressSpinner" />
-  </div>
 </template>
 
 <script setup>
@@ -32,16 +28,15 @@ import { useRigsStore, useRigsToShowStore, useAllRigsTypeStore, useRigsTypeStore
 import { useMapStore } from '@/stores/googleMap';
 import RigMap from '@/components/Map.vue'
 import Skeleton from 'primevue/skeleton';
-import ProgressSpinner from 'primevue/progressspinner';
 import NavbarMap from '@/components/NavbarMap.vue';
 import { useToast } from "primevue/usetoast";
+// import getReverseGeocoding from '@/services/googleMapService';
 
 
 export default {
   components: {
     RigMap,
     Skeleton,
-    ProgressSpinner,
     NavbarMap,
     Toast
   },
@@ -61,7 +56,8 @@ export default {
       gmapKey: null,
       toast: null,
       mapContainer: ref(),
-      isMapLoaded: false
+      isMapLoaded: false,
+      geoIp: null,
     }
   },
   created() {
@@ -73,8 +69,8 @@ export default {
   },
   async mounted() {
     this.toast = useToast()
-    // this.getGeoFromBrowser();
     await this.getGeoFromCapacitor();
+    this.toast.add({ severity: 'success', summary: 'Benvenuto', detail: 'Benvenuto su Refuel!, scopri le stazioni di rifornimento più vicini a te!', life: 3000 });
   },
   methods: {
     checkIfMapIsLoaded(val) {
@@ -105,17 +101,16 @@ export default {
       console.log("GeoLocated: ", this.latitude + " " + this.longitude)
     },
     async geoError() {
-      // status.textContent = "Geolocation is not supported by your browser";
       console.log("Geolocation is not supported by your browser")
-      let geoIp = await getGeoIp();
-      if (geoIp.message) {
+      this.geoIp = await getGeoIp();
+      if (this.geoIp.message) {
         //45.468157212316896, 9.182358106761049
-        console.log(geoIp.message)
+        console.log(this.geoIp.message)
         this.latitude = 45.468157212316896;
         this.longitude = 9.182358106761049;
       } else {
-        this.latitude = geoIp.latitude;
-        this.longitude = geoIp.longitude;
+        this.latitude = this.geoIp.latitude;
+        this.longitude = this.geoIp.longitude;
       }
       this.toast.add({ severity: 'warn', summary: 'Info', detail: 'Per una esperienza migliore, ti consigliamo di attivare il servizio di localizzazione.' });
     },
