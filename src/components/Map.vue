@@ -67,10 +67,17 @@ export default {
       networkType: null,
       interval: null,
       areRigsLoaded: false,
+      isReviewMode: import.meta.env.VITE_REVIEW_MODE,
+      randomGcPoints: [],
     }
   },
   emits: ['getIsMapLoaded'],
   async mounted() {
+    if(this.isReviewMode){
+      this.randomGcPoints = this.generateCloseGCPoints(this.latitude, this.longitude, 1000, 13) // 5 punti entro 100 metri
+      this.toast.add({ severity: 'warn', summary: 'Info', detail: 'Versione Demo - Dati Simulati!' });
+    }
+    
     await this.mainAuth();
   },
   watch: {
@@ -226,8 +233,18 @@ export default {
       if (this.rigsStore.getRigs().length <= 0) {
         distanceThreshold = 10;
       }
-      this.localRigs = await getNearbyRigs(this.mapStore.getMap().getView().getCenter()[1], this.mapStore.getMap().getView().getCenter()[0], distanceThreshold, this.authWs.token)
 
+      if(this.isReviewMode){
+        this.localRigs = await import('@/assets/mock-stations.json')
+        this.localRigs = this.localRigs.default
+        for(let i = 0; i < this.localRigs.length; i++){
+          this.localRigs[i].rig.latitude = this.randomGcPoints[i].lat
+          this.localRigs[i].rig.longitude = this.randomGcPoints[i].lon
+        }
+      }else{
+        this.localRigs = await getNearbyRigs(this.mapStore.getMap().getView().getCenter()[1], this.mapStore.getMap().getView().getCenter()[0], distanceThreshold, this.authWs.token)
+      }
+      
       this.areRigsLoaded = true;
 
       if (this.hasErrors(this.localRigs)) {
@@ -250,13 +267,13 @@ export default {
         this.rigsToShowStore.setRigs(this.rigsStore.getRigs())
       }
       // console.log(this.rigsToShowStore.getRigs())
-      if(this.rigsToShowStore.getRigs().length <= 0) {
+      if(this.localRigs.length <= 0) {
         let countryObj = await googleMapService.getReverseGeocoding(this.latitude, this.longitude, this.gmapSession.key);
         countryObj = countryObj.results[0].address_components.find(comp =>
           comp.types.includes('country'));
         if(countryObj){
           if(countryObj.long_name != "Italy"){
-            this.toast.add({ severity: 'warn', summary: 'Info', detail: 'Questa applicazione è disponibile solo in ITALIA. Al momento non ci sono stazioni di servizio visualizzabili nella tua area geografica.', life: 5000 });
+            this.toast.add({ severity: 'warn', summary: 'Info', detail: 'Questa applicazione è disponibile solo in ITALIA. Al momento non sono state trovate stazioni di servizio visualizzabili nella tua area geografica.', life: 5000 });
             return;
           }
         }
@@ -391,6 +408,28 @@ export default {
         if(this.interval  == null){
             this.interval = await this.retry();
         }
+    },
+    generateCloseGCPoints(lat, lon, distanceInMeters, numberPoints) {
+      const raggioTerra = 6371000; // in metri
+      const nuoviPunti = [];
+
+      for (let i = 0; i < numberPoints; i++) {
+        // Offset casuale in metri
+        const dx = (Math.random() - 0.5) * 2 * distanceInMeters;
+        const dy = (Math.random() - 0.5) * 2 * distanceInMeters;
+
+        // Offset in radianti
+        const deltaLat = dy / raggioTerra;
+        const deltaLon = dx / (raggioTerra * Math.cos((lat * Math.PI) / 180));
+
+        // Nuove coordinate
+        const newLat = lat + (deltaLat * 180) / Math.PI;
+        const newLon = lon + (deltaLon * 180) / Math.PI;
+
+        nuoviPunti.push({ lat: newLat, lon: newLon });
+      }
+
+      return nuoviPunti;
     }
   }
 }
