@@ -1,7 +1,7 @@
 <template>
     <Sidebar v-model:visible="isSidebarVisible" header="Storico" position="full">
         <div class="card">
-             <Line :data="chartData" :options="chartOptions" style="width: 100%; height: 100%;"/>
+             <Line :data="chartData" :options="chartOptions" style="width: 90%; height: 90%; margin: auto; align-items: center;"/>
         </div>
     </Sidebar>
 </template>
@@ -41,7 +41,7 @@ export default {
             chartData: ref({ labels: [], datasets: [] }),
             chartOptions: ref(),
             datasets : [],
-            zoomOptions: {
+            chartPlugins: {
                 zoom: {
                     pan:{
                             enabled: true
@@ -53,8 +53,13 @@ export default {
                         pinch: {
                             enabled: true
                         },
-                        mode: 'xy',
+                        mode: 'x',
                     }
+                },
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    fullSize: true,
                 },
             }
         }
@@ -78,8 +83,12 @@ export default {
                         data: [],
                         fill: false,
                         borderColor: '#4bc0c0',
-                        tension: 0.4
-                    });
+                        borderWidth: 2,
+                        radius: 0,
+                        tension: 0.4,
+                        pointHoverRadius: 10,
+                        pointHitRadius: 10
+                    })
                     
                 }
                 dataMap.get(key).data.push(rig.price.toFixed(2));
@@ -95,7 +104,7 @@ export default {
             this.chartOptions = {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: this.zoomOptions
+                plugins: this.chartPlugins,
             }
         },
         resetChart(){

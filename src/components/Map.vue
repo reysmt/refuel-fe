@@ -8,7 +8,10 @@
   <img src="../../google_logo/google_logo/android/res/drawable-xxxhdpi/google_on_non_white.png" class="google-logo" />
   <YourPosition v-if="mapStore.getMap() != null && isMapLoaded" :popupContent="'blank'" :latitude="latitude"
     :longitude="longitude" :mapObj="mapStore.getMap()" :key="1" ref="position" />
-
+    <div class="loading-spinner" v-if="!areRigsLoaded">
+    <ProgressSpinner style="width: 50px; height: 50px; z-index:999;" strokeWidth="100" fill="var(--surface-ground)"
+      animationDuration=".9s" aria-label="Custom ProgressSpinner" />
+  </div>
 </template>
 <script>
 import { Network } from '@capacitor/network';
@@ -33,12 +36,14 @@ import {
 } from 'ol/style.js';
 import MapPopup from './MapPopup.vue';
 import { useToast } from "primevue/usetoast";
+import ProgressSpinner from 'primevue/progressspinner';
 export default {
   name: "mapContainer",
   props: ['rigs', 'longitude', 'latitude'],
   components: {
     YourPosition,
-    MapPopup
+    MapPopup,
+    ProgressSpinner
   },
   data() {
     return {
@@ -50,7 +55,6 @@ export default {
       isMapLoaded: false,
       authWs: null,
       gmapSession: null,
-      // features: [],
       vectorSource: null,
       clusterSource: null,
       clusters: null,
@@ -61,26 +65,20 @@ export default {
       toast: useToast(),
       networkStatus: null,
       networkType: null,
+      interval: null,
+      areRigsLoaded: false,
+      isReviewMode: import.meta.env.VITE_REVIEW_MODE,
+      randomGcPoints: [],
     }
   },
   emits: ['getIsMapLoaded'],
   async mounted() {
-    await this.auth();
-    await this.getGmapSession(this.authWs.token);
-    await this.mapStore.initMap(this.$refs.map, this.gmapSession.session, this.gmapSession.key)
-    this.setZoomAndPosition();
-    this.dragMap();
-    this.postRenderMap()
-    this.singleClickEvent();
-    this.checkNetworkStatus();
-    this.rigsTypeStore.$subscribe(() => {
-      // this.removeOverlays();
-      // console.log(this.rigsTypeStore.getType())
-      // console.log(this.mapStore.getMap().getLayers().getArray())
-      this.mapStore.getMap().removeOverlay(this.overlay);
-      this.clickedFeaturesProp = null;
-      this.reloadOverlaysRigs();
-    });
+    if(this.isReviewMode){
+      this.randomGcPoints = this.generateCloseGCPoints(this.latitude, this.longitude, 1000, 13) // 5 punti entro 100 metri
+      this.toast.add({ severity: 'warn', summary: 'Info', detail: 'Versione Demo - Dati Simulati!' });
+    }
+    
+    await this.mainAuth();
   },
   watch: {
     networkStatus(val) {
@@ -97,6 +95,27 @@ export default {
   updated() {
   },
   methods: {
+    async mainAuth(){
+      await this.auth();
+      await this.getGmapSession(this.authWs.token);
+      if(this.gmapSession.session == undefined || this.gmapSession.key == undefined) {
+        return;
+      }
+      await this.mapStore.initMap(this.$refs.map, this.gmapSession.session, this.gmapSession.key)
+      this.setZoomAndPosition();
+      this.dragMap();
+      this.postRenderMap()
+      this.singleClickEvent();
+      this.checkNetworkStatus();
+      this.rigsTypeStore.$subscribe(() => {
+        // this.removeOverlays();
+        // console.log(this.rigsTypeStore.getType())
+        // console.log(this.mapStore.getMap().getLayers().getArray())
+        this.mapStore.getMap().removeOverlay(this.overlay);
+        this.clickedFeaturesProp = null;
+        this.reloadOverlaysRigs();
+      });
+    },
     checkNetworkStatus() {
       Network.addListener('networkStatusChange', networkStatus => {
         const { connected, connectionType } = networkStatus;
@@ -149,7 +168,6 @@ export default {
       if(this.hasErrors(this.authWs)) {
         return;
       }
-      // console.log(this.authWs.token)
     },
     async showAndClusterizePopups() {
       this.removeClusterizedPopups();
@@ -190,7 +208,7 @@ export default {
     },
     setZoomAndPosition() {
       this.mapStore.getMap().getView().setCenter([this.longitude, this.latitude]);
-      this.mapStore.getMap().getView().setZoom(this.mapStore.getMap().getView().getZoom() + 13);
+      this.mapStore.getMap().getView().setZoom(14);
     },
     //useless if useGeographic() is used
     convertOsmCoordinatesToGmCoordinates(coordinates) {
@@ -215,7 +233,19 @@ export default {
       if (this.rigsStore.getRigs().length <= 0) {
         distanceThreshold = 10;
       }
-      this.localRigs = await getNearbyRigs(this.mapStore.getMap().getView().getCenter()[1], this.mapStore.getMap().getView().getCenter()[0], distanceThreshold, this.authWs.token)
+
+      if(this.isReviewMode){
+        this.localRigs = await import('@/assets/mock-stations.json')
+        this.localRigs = this.localRigs.default
+        for(let i = 0; i < this.localRigs.length; i++){
+          this.localRigs[i].rig.latitude = this.randomGcPoints[i].lat
+          this.localRigs[i].rig.longitude = this.randomGcPoints[i].lon
+        }
+      }else{
+        this.localRigs = await getNearbyRigs(this.mapStore.getMap().getView().getCenter()[1], this.mapStore.getMap().getView().getCenter()[0], distanceThreshold, this.authWs.token)
+      }
+      
+      this.areRigsLoaded = true;
 
       if (this.hasErrors(this.localRigs)) {
         return;
@@ -237,6 +267,18 @@ export default {
         this.rigsToShowStore.setRigs(this.rigsStore.getRigs())
       }
       // console.log(this.rigsToShowStore.getRigs())
+      if(this.localRigs.length <= 0) {
+        let countryObj = await googleMapService.getReverseGeocoding(this.latitude, this.longitude, this.gmapSession.key);
+        countryObj = countryObj.results[0].address_components.find(comp =>
+          comp.types.includes('country'));
+        if(countryObj){
+          if(countryObj.long_name != "Italy"){
+            this.toast.add({ severity: 'warn', summary: 'Info', detail: 'Questa applicazione è disponibile solo in ITALIA. Al momento non sono state trovate stazioni di servizio visualizzabili nella tua area geografica.', life: 5000 });
+            return;
+          }
+        }
+        this.toast.add({ severity: 'warn', summary: 'Info', detail: 'Nessuna stazione di rifornimento trovata nelle tue vicinanze.', life: 5000 });
+      }
     },
     setupOverlays(map) {
       let extent = map.getView().calculateExtent(map.getSize().map(i => i + 50));
@@ -295,20 +337,35 @@ export default {
       });
       return style;
     },
-    hasErrors(error) {
-      if (error.response) {
-        console.log(error.response);
-        this.toast.add({ severity: 'error', summary: 'Errore', detail: 'Errore interno, qualcosa è andato storto, riprova più tardi.' });
+    hasErrors(api) {
+      if (api.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+        console.log(api.response);
+        this.toast.add({ severity: 'error', summary: 'Errore', detail: 'Errore interno, qualcosa è andato storto, riprova più tardi.', life: 5000 });
+        this.executeRetryInterval();
         return true;
-      } else if (error.request) {
-        console.log(error.request);
-        this.toast.add({ severity: 'error', summary: 'Errore', detail: 'Connessione al server non disponibile, riprova più tardi.' });
+      } else if (api.request) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+      // http.ClientRequest in node.js
+        console.log(api.request);
+        this.toast.add({ severity: 'error', summary: 'Errore', detail: 'Connessione al server non disponibile, verifica la connessione internet oppure riprova più tardi.', life: 5000 });
+        this.executeRetryInterval();
         return true;
-      } else if (error.message) {
-        console.log(error.message);
-        this.toast.add({ severity: 'error', summary: 'Errore', detail: 'Errore generico' });
+      } else if (api.message) {
+      // Something happened in setting up the request that triggered an Error
+        console.log(api.message);
+        this.toast.add({ severity: 'error', summary: 'Errore', detail: 'Errore generico', life: 5000 });
         return true;
       }
+
+      if(this.interval != null) {
+        this.toast.add({ severity: 'success', summary: 'Info', detail: 'Connessione ripristinata.', life: 3000 });
+      }
+      clearInterval(this.interval);
+      this.interval = null;
+
       return false;
     },
     getButtons() {
@@ -338,6 +395,41 @@ export default {
     },
     getIsMapLoaded() {
       return this.isMapLoaded;
+    },
+    async retry(){
+        let retryApisCall = async () => {
+         this.toast.add({ severity: 'warn', summary: 'Info', detail: 'Tentativo di connessione in corso.', life: 3000 });
+         await this.mainAuth();
+         this.reloadOverlaysRigs();
+        }
+        return setInterval(retryApisCall, 10000);
+    },
+    async executeRetryInterval(){
+        if(this.interval  == null){
+            this.interval = await this.retry();
+        }
+    },
+    generateCloseGCPoints(lat, lon, distanceInMeters, numberPoints) {
+      const raggioTerra = 6371000; // in metri
+      const nuoviPunti = [];
+
+      for (let i = 0; i < numberPoints; i++) {
+        // Offset casuale in metri
+        const dx = (Math.random() - 0.5) * 2 * distanceInMeters;
+        const dy = (Math.random() - 0.5) * 2 * distanceInMeters;
+
+        // Offset in radianti
+        const deltaLat = dy / raggioTerra;
+        const deltaLon = dx / (raggioTerra * Math.cos((lat * Math.PI) / 180));
+
+        // Nuove coordinate
+        const newLat = lat + (deltaLat * 180) / Math.PI;
+        const newLon = lon + (deltaLon * 180) / Math.PI;
+
+        nuoviPunti.push({ lat: newLat, lon: newLon });
+      }
+
+      return nuoviPunti;
     }
   }
 }
