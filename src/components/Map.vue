@@ -272,7 +272,7 @@ export default {
         countryObj = countryObj.results[0].address_components.find(comp =>
           comp.types.includes('country'));
         if(countryObj){
-          if(countryObj.long_name != "Italy"){
+          if(countryObj.long_name != "Italy" && countryObj.long_name != "Italia") {
             this.toast.add({ severity: 'warn', summary: 'Info', detail: 'Questa applicazione è disponibile solo in ITALIA. Al momento non sono state trovate stazioni di servizio visualizzabili nella tua area geografica.', life: 5000 });
             return;
           }
