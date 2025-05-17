@@ -6,7 +6,7 @@
             <Column field="rig.flag" header="Insegna" sortable style="min-width: 1rem; font-size: .8rem;"></Column>
             <Column field="rig.municipality" header="Comune" sortable style="min-width: 1rem; font-size: .8rem;"></Column>
             <Column field="priceToShow" header="Prezzo" sortable style="min-width: 1rem; font-size: .8rem; white-space: nowrap; padding-right: .5rem;"></Column>
-            <Column field="" header="" style="padding: 0;">
+            <Column field="" header="" style="padding: .1px;">
                 <template #body>
                     <i class="pi pi-info-circle"></i>
                 </template>

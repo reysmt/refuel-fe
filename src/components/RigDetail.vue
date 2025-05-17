@@ -4,14 +4,14 @@
 
         <!-- <StreetView :longitude="rig.longitude" :latitude="rig.latitude" @click="slotProps.onClick" /> -->
         <div>
-            <FieldsetPv :legend="rig.flag" style="padding-top: 0; padding-bottom: 0rem; margin-bottom: .5rem;">
+            <FieldsetPv :legend="rig.flag" style="margin-bottom: .5rem;">
                 <span class="font-small p-text-secondary">Gestore:</span> <br>
                 {{ rig.manager }}
                 <Divider style="margin-top: .8rem; margin-bottom: .8rem;" />
                 <span class="font-small p-text-secondary">Indirizzo:</span><br>
                 <div>{{ rig.address }}, {{ rig.municipality }}</div>
             </FieldsetPv>
-            <ImagePv alt="Image" preview class="street-view-section">
+            <ImagePv alt="Image" preview class="street-view-section" style="border-radius: var(--p-fieldset-border-radius);">
                 <template #image>
                     <StreetViewStaticImage :longitude="rig.longitude" :latitude="rig.latitude" :gKey="gmapKey">
                     </StreetViewStaticImage>
@@ -25,7 +25,7 @@
             </ImagePv>
             <!-- <Divider style="margin-top: .8rem; margin-bottom: .8rem;" /> -->
             <DataTable :value="rigPrices" sortField="price" :sortOrder="1" showGridlines stripedRows scrollable
-                scrollHeight="300px" tableStyle="min-width: auto" style="margin-top: .5rem;">
+                scrollHeight="300px" tableStyle="min-width: auto" style="margin-top: .5rem; ">
                 <Column field="rigFuelType.rigFuelTypeDescription" header="Tipo" sortable>
                     <template #body="{data}">
                         <span>{{ data.rigFuelType.rigFuelTypeDescription }}</span><br>

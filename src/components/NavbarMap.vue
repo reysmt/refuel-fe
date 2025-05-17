@@ -1,7 +1,7 @@
 <template>
   <div class="navigation-card">
     <a href="#" class="tab" v-for="item in items" v-bind:key="item.label">
-      <i :class="item.class" style="font-size: 1rem" @click="itemClick($event, item)"></i>
+      <i :class="item.class" style="font-size: 1rem; padding: 10px;" @click="itemClick($event, item)"></i>
     </a>
   </div>
 
