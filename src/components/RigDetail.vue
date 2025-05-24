@@ -1,5 +1,5 @@
 <template>
-    <Sidebar v-model:visible="isSidebarVisible" header="Dettagli" position="bottom"
+    <Drawer v-model:visible="isSidebarVisible" header="Dettagli" position="bottom"
         style="height: auto; max-height: 100%;">
 
         <!-- <StreetView :longitude="rig.longitude" :latitude="rig.latitude" @click="slotProps.onClick" /> -->
@@ -11,7 +11,8 @@
                 <span class="font-small p-text-secondary">Indirizzo:</span><br>
                 <div>{{ rig.address }}, {{ rig.municipality }}</div>
             </FieldsetPv>
-            <ImagePv alt="Image" preview class="street-view-section" style="border-radius: var(--p-fieldset-border-radius);">
+            <ImagePv alt="Image" preview class="street-view-section" style="border-radius: var(--p-fieldset-border-radius);"
+            zoomInDisabled zoomOutDisabled>
                 <template #image>
                     <StreetViewStaticImage :longitude="rig.longitude" :latitude="rig.latitude" :gKey="gmapKey">
                     </StreetViewStaticImage>
@@ -47,16 +48,16 @@
                     </template>
                 </Column>
             </DataTable>
-            <Divider style="margin-top: .8rem; margin-bottom: .8rem;" />
+            <Divider/>
             <div class="">
                 <ButtonPv type="button" label="Vai" @click="openMaps()" style="margin-right: 10px;"></ButtonPv>
-                 <!-- <ButtonPv type="button" severity="info" label="Storico" @click="isPriceHistoryVisible = !isPriceHistoryVisible"
-                 style="margin-right: 10px;"></ButtonPv> -->
+                 <ButtonPv type="button" severity="info" label="Storico" @click="isPriceHistoryVisible = !isPriceHistoryVisible"
+                 style="margin-right: 10px;"></ButtonPv>
                 <ButtonPv type="button" label="Chiudi" severity="secondary" @click="closeSidebar()"
                     style="margin-right: 10px;"></ButtonPv>
             </div>
         </div>
-    </Sidebar>
+    </Drawer>
     <RigPriceHistory :isVisible="isPriceHistoryVisible" :rig="rig" :token="token" @updatedVisibility="updatedVisibilityPriceHistory"></RigPriceHistory>
 </template>
 <script setup>
@@ -69,7 +70,7 @@ import Divider from 'primevue/divider';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import ButtonPv from 'primevue/button';
-import Sidebar from 'primevue/sidebar';
+import Drawer from 'primevue/drawer';
 import { defineAsyncComponent, ref} from 'vue';
 import RigPriceHistory from './RigPriceHistory.vue';
 export default {
@@ -82,7 +83,7 @@ export default {
         DataTable,
         Column,
         ButtonPv,
-        Sidebar,
+        Drawer,
         RigPriceHistory
     },
     mounted() {

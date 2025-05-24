@@ -1,18 +1,20 @@
 <template>
-    <Sidebar v-model:visible="isSidebarVisible" header="Storico" position="full">
+    <Drawer v-model:visible="isSidebarVisible" header="Storico" position="full">
         <div class="card">
              <Line :data="chartData" :options="chartOptions" style="width: 90%; height: 90%; margin: auto; align-items: center;"/>
         </div>
-    </Sidebar>
+    </Drawer>
 </template>
 <script setup>
-import Sidebar from 'primevue/sidebar';
+import Drawer from 'primevue/drawer';
 </script>
 <script>
+import colors from '@/assets/rigTypesColor.js';
 import { ref } from 'vue';
 import {getRigPriceHistoryByRigId} from '@/services/rigsService';
 import { Line } from 'vue-chartjs';
 import zoomPlugin from 'chartjs-plugin-zoom';
+import 'chartjs-adapter-date-fns';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -21,8 +23,9 @@ import {
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 } from 'chart.js'
+import { TimeScale } from 'chart.js';
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -31,7 +34,8 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  zoomPlugin
+  zoomPlugin,
+  TimeScale
 )
 export default {
     data() {
@@ -65,7 +69,6 @@ export default {
         }
     },
     mounted() {
-
     },
     methods:{
         processData(){
@@ -82,7 +85,7 @@ export default {
                         label: rig.rigFuelType.rigFuelTypeDescription + " " + isSelfLabel,
                         data: [],
                         fill: false,
-                        borderColor: '#4bc0c0',
+                        borderColor: colors.get(rig.rigFuelType.rigFuelTypeDescription.toLowerCase()) || '#000000',
                         borderWidth: 2,
                         radius: 0,
                         tension: 0.4,
@@ -105,6 +108,27 @@ export default {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: this.chartPlugins,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            // Luxon format string
+                            parser: 'yyyy-MM-dd',
+                            tooltipFormat: 'dd/MM/yyyy',
+                            unit: 'month',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'value'
+                        }
+                    }
+                },
             }
         },
         resetChart(){

@@ -1,6 +1,6 @@
 <template>
 <div class="street-view-image-static">
-    <Image :src=url alt="Image" width="450" />
+    <Image :src=url alt="Image"/>
 </div>    
 </template>
 <script setup>
@@ -19,7 +19,7 @@ export default {
     },
     methods: {
         loadUrl(apiKey, latitude, longitude){
-            this.url = "https://maps.googleapis.com/maps/api/streetview?size=400x400&location="+ latitude +","+longitude+"&fov=80&heading=70&pitch=0&key="+ apiKey
+            this.url = "https://maps.googleapis.com/maps/api/streetview?size=400x100&location="+ latitude +","+longitude+"&fov=80&heading=70&pitch=0&key="+ apiKey
         }
     },
     props : ['latitude','longitude','gKey']
