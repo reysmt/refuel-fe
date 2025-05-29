@@ -63,7 +63,6 @@ export default {
                 legend: {
                     display: true,
                     position: 'bottom',
-                    fullSize: true,
                 },
             }
         }
@@ -80,7 +79,7 @@ export default {
                 }
                 const key = `${rig.rigFuelType.rigFuelTypeDescription}-${rig.self}`;
                 if(!dataMap.has(key)){
-                    let isSelfLabel = rig.self ? "non servito" : "servito"
+                    let isSelfLabel = rig.self ? "Self" : "Servito"
                     dataMap.set(key, {
                         label: rig.rigFuelType.rigFuelTypeDescription + " " + isSelfLabel,
                         data: [],
@@ -119,13 +118,13 @@ export default {
                         },
                         title: {
                             display: true,
-                            text: 'Date'
+                            text: ''
                         }
                     },
                     y: {
                         title: {
                             display: true,
-                            text: 'value'
+                            text: 'Prezzo (€)'
                         }
                     }
                 },

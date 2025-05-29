@@ -19,7 +19,7 @@ export default {
     },
     methods: {
         loadUrl(apiKey, latitude, longitude){
-            this.url = "https://maps.googleapis.com/maps/api/streetview?size=400x100&location="+ latitude +","+longitude+"&fov=80&heading=70&pitch=0&key="+ apiKey
+            this.url = "https://maps.googleapis.com/maps/api/streetview?size=400x70&location="+ latitude +","+longitude+"&fov=80&heading=70&pitch=0&key="+ apiKey
         }
     },
     props : ['latitude','longitude','gKey']
