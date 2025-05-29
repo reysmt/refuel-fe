@@ -7,7 +7,7 @@
             <FieldsetPv :legend="rig.flag" style="margin-bottom: .5rem;">
                 <span class="font-small p-text-secondary">Gestore:</span> <br>
                 {{ rig.manager }}
-                <Divider style="margin-top: .8rem; margin-bottom: .8rem;" />
+                <Divider unstyled style="margin-top: .8rem; margin-bottom: .8rem;" />
                 <span class="font-small p-text-secondary">Indirizzo:</span><br>
                 <div>{{ rig.address }}, {{ rig.municipality }}</div>
             </FieldsetPv>
@@ -48,7 +48,7 @@
                     </template>
                 </Column>
             </DataTable>
-            <Divider/>
+            <Divider unstyled style="margin-top: 1rem; margin-bottom: 1rem;"/>
             <div class="">
                 <ButtonPv type="button" label="Vai" @click="openMaps()" style="margin-right: 10px;"></ButtonPv>
                  <ButtonPv type="button" severity="info" label="Storico" @click="isPriceHistoryVisible = !isPriceHistoryVisible"
