@@ -1,14 +1,14 @@
 <template>
     <Drawer v-model:visible="isSidebarVisible" header="Storico" position="full">
-        <div class="card">
+        <div class="card" v-if="!isLoading">
              <Line :data="chartData" :options="chartOptions" style="width: 90%; height: 90%; margin: auto; align-items: center;"/>
         </div>
+        <ProgressSpinner class="rig-price-history-spinner"/>
     </Drawer>
 </template>
-<script setup>
-import Drawer from 'primevue/drawer';
-</script>
 <script>
+import Drawer from 'primevue/drawer';
+import ProgressSpinner from 'primevue/progressspinner';
 import colors from '@/assets/rigTypesColor.js';
 import { ref } from 'vue';
 import {getRigPriceHistoryByRigId} from '@/services/rigsService';
@@ -38,6 +38,11 @@ ChartJS.register(
   TimeScale
 )
 export default {
+    components: {
+        Drawer,
+        ProgressSpinner,
+        Line
+    },
     data() {
         return {
             isSidebarVisible: this.visible,
@@ -45,6 +50,7 @@ export default {
             chartData: ref({ labels: [], datasets: [] }),
             chartOptions: ref(),
             datasets : [],
+            isLoading: false,
             chartPlugins: {
                 zoom: {
                     pan:{
@@ -141,12 +147,14 @@ export default {
     emits: ['updatedVisibility'],
     watch: {
         async isVisible(newVal) {
+            this.isLoading = true;
             this.isSidebarVisible = newVal;
             if(newVal){
                 // console.log(this.token)
                 this.resetChart();
                 this.currRig = await getRigPriceHistoryByRigId(this.rig.rigId, this.token);
                 this.processData();
+                this.isLoading = false;
                 // console.log(this.currRig)
             }
             

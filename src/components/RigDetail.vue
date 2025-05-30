@@ -5,10 +5,10 @@
         <!-- <StreetView :longitude="rig.longitude" :latitude="rig.latitude" @click="slotProps.onClick" /> -->
         <div>
             <FieldsetPv :legend="rig.flag" style="margin-bottom: .5rem;">
-                <span class="font-small p-text-secondary">Gestore:</span> <br>
+                <span style="font-weight: var(--p-fieldset-legend-font-weight);">Gestore:</span> <br>
                 {{ rig.manager }}
                 <Divider unstyled style="margin-top: .8rem; margin-bottom: .8rem;" />
-                <span class="font-small p-text-secondary">Indirizzo:</span><br>
+                <span style="font-weight: var(--p-fieldset-legend-font-weight);">Indirizzo:</span><br>
                 <div>{{ rig.address }}, {{ rig.municipality }}</div>
             </FieldsetPv>
             <ImagePv alt="Image" preview class="street-view-section" style="border-radius: var(--p-fieldset-border-radius);"
