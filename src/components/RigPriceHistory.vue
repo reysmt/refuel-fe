@@ -3,7 +3,7 @@
         <div class="card" v-if="!isLoading">
              <Line :data="chartData" :options="chartOptions" style="width: 90%; height: 90%; margin: auto; align-items: center;"/>
         </div>
-        <ProgressSpinner class="rig-price-history-spinner"/>
+        <ProgressSpinner class="rig-price-history-spinner" v-if="isLoading"/>
     </Drawer>
 </template>
 <script>
