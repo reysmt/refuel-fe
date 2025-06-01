@@ -99,7 +99,10 @@ export default {
                     })
                     
                 }
-                dataMap.get(key).data.push(rig.price.toFixed(2));
+                dataMap.get(key).data.push({
+                    x: rig.comuDate,
+                    y: rig.price.toFixed(2)
+            });
             });
             this.datasets = Array.from(dataMap.values())
             // console.log(this.datasets)
