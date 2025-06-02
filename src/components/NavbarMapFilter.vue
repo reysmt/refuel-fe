@@ -1,7 +1,7 @@
 <template>
       
-<Dialog id="rigTypeFilter" v-model:visible="isFilterVisible" header="Filtra" style="width: 25rem;" position="right" :modal="false" :draggable="false">
-    <div v-if="allRigsTypeStore.getAllRigsType().length > 0">
+<Dialog v-model:visible="isFilterVisible" header="Filtra" style="width: 25rem;" position="right" :modal="false" :draggable="false">
+    <div id="rigTypeFilter" v-if="allRigsTypeStore.getAllRigsType().length > 0">
         <Listbox v-model="rigType" :options="allRigsTypeStore.getAllRigsType()" listStyle="max-height:350px"/>
     </div>
     
@@ -30,7 +30,8 @@ export default {
             rigType: null,
             toast : null,
             driverObj: null,
-            isTourSeen: false
+            isTourSeen: false,
+            preference: null,
         }
     },
     props: ["isVisible"],
@@ -39,14 +40,15 @@ export default {
         this.toast = useToast();
         this.driverObj = driver();
         this.isTourSeen = await Preferences.get({ key: 'tour_seen' });
-        console.log(this.isTourSeen.value);
-        this.allRigsTypeStore.$subscribe(() => {
-            if (this.isTourSeen.value === null || this.isTourSeen.value === 'false') {
-                this.isFilterVisible = true;
-                this.startTour();
-                // await Preferences.set({ key: 'tour_seen', value: 'true' });
-            }
-        });
+        if (this.isTourSeen.value === null || this.isTourSeen.value === 'false') {
+            setTimeout(() => {
+                this.toast.add({ severity: 'info', summary: 'Info', detail: 'Seleziona il tipo di impianto che vuoi visualizzare sulla mappa.' });
+            }, 500);
+            this.isFilterVisible = true;
+            await Preferences.set({ key: 'tour_seen', value: 'true' });
+        }
+        this.rigTypeStore.setType((await Preferences.get({ key: 'rig_type_preference' })).value === 'null' ? null : (await Preferences.get({ key: 'rig_type_preference' })).value);
+        this.rigType = this.rigTypeStore.getType();
     },
     methods: {
         startTour() {
@@ -73,7 +75,8 @@ export default {
             this.isFilterVisible = newVal;
             // console.log(this.isFilterVisible)
         },
-        rigType(newVal){
+        async rigType(newVal){
+            this.toast.removeAllGroups();
             this.rigTypeStore.setType(newVal);
             this.$emit('updatedVisibility', false);
             this.isFilterVisible = false;
@@ -82,6 +85,8 @@ export default {
             }else{
             this.toast.add({ severity: 'info', summary: 'Info', detail: 'Filtro '+ this.rigTypeStore.getType() +' impostato', life: 1000 });
             }
+            await Preferences.set({ key: 'rig_type_preference', value: newVal });
+            console.log(this.rigType)
         }
 
     },

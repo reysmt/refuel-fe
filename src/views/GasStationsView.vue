@@ -9,7 +9,7 @@
       <RigMap :longitude="longitude" :latitude="latitude" ref="mapContainer" @getIsMapLoaded="checkIfMapIsLoaded">
       </RigMap>
     </div>
-    <NavbarMap :gmapKey="gmapKey" :longitude="longitude" :latitude="latitude"></NavbarMap>
+    <NavbarMap v-if="isMapLoaded" :gmapKey="gmapKey" :longitude="longitude" :latitude="latitude"></NavbarMap>
   </div>
 </template>
 
@@ -75,7 +75,6 @@ export default {
   methods: {
     checkIfMapIsLoaded(val) {
       this.isMapLoaded = val;
-      // console.log(val)
     },
     getGeoFromBrowser() {
       if (navigator.geolocation) {
