@@ -7,7 +7,7 @@
 
   <!-- <NavbarMapList :isVisible="displayList" :gmapKey="gmapKey" @updatedVisibility="updatedVisibility"
     class="navbarmap-list"></NavbarMapList> -->
-  <NavbarMapFilter :isVisible="displayFilter" @updatedVisibility="updatedVisibilityFilter"></NavbarMapFilter>
+  <NavbarMapFilter id="RigTypeFilter" :isVisible="displayFilter" @updatedVisibility="updatedVisibilityFilter"></NavbarMapFilter>
   <NavbarMapInfo :isVisible="displayInfo" @updatedVisibility="updatedVisibilityInfo"></NavbarMapInfo>
 </template>
 <script setup>
@@ -19,6 +19,7 @@ import { ref } from 'vue';
 import NavbarMapFilter from './NavbarMapFilter.vue';
 import NavbarMapInfo from './NavbarMapInfo.vue';
 import { useMapStore } from '@/stores/googleMap';
+import "driver.js/dist/driver.css";
 export default {
   components: {
     // Dock,
@@ -33,21 +34,12 @@ export default {
       displayFilter: false,
       displayInfo: false,
       mapStore: useMapStore(),
-      items: null
+      items: null,
     }
   },
   props: ['gmapKey','longitude','latitude'],
-  mounted(){
-    // console.log(this.displayList)
+  async mounted(){
     this.items = ref([
-        // {
-        //   label: 'List',
-        //   class: 'pi pi-bars',
-        //   command: () => {
-        //     this.displayList = !this.displayList
-        //     console.log(this.displayList);
-        //   }
-        // },
         {
           label: 'Home',
           class: 'pi pi-home',

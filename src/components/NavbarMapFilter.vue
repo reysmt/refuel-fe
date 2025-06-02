@@ -1,6 +1,6 @@
 <template>
       
-<Dialog v-model:visible="isFilterVisible" header="Filtra" style="width: 25rem;" position="right" :modal="false" :draggable="false">
+<Dialog id="rigTypeFilter" v-model:visible="isFilterVisible" header="Filtra" style="width: 25rem;" position="right" :modal="false" :draggable="false">
     <div v-if="allRigsTypeStore.getAllRigsType().length > 0">
         <Listbox v-model="rigType" :options="allRigsTypeStore.getAllRigsType()" listStyle="max-height:350px"/>
     </div>
@@ -15,6 +15,8 @@ import { useToast } from "primevue/usetoast";
 </script>
 
 <script>
+import { Preferences } from '@capacitor/preferences';
+import { driver } from "driver.js";
 import { useAllRigsTypeStore, useRigsTypeStore } from '@/stores/rigs';
 import { useMapStore } from '@/stores/googleMap';
 export default {
@@ -26,13 +28,37 @@ export default {
             rigTypeStore : useRigsTypeStore(),
             mapStore : useMapStore(),
             rigType: null,
-            toast : null
+            toast : null,
+            driverObj: null,
+            isTourSeen: false
         }
     },
     props: ["isVisible"],
-    mounted(){
+    async mounted(){
         // console.log(this.allRigsTypeStore.getAllRigsType())
         this.toast = useToast();
+        this.driverObj = driver();
+        this.isTourSeen = await Preferences.get({ key: 'tour_seen' });
+        console.log(this.isTourSeen.value);
+        this.allRigsTypeStore.$subscribe(() => {
+            if (this.isTourSeen.value === null || this.isTourSeen.value === 'false') {
+                this.isFilterVisible = true;
+                this.startTour();
+                // await Preferences.set({ key: 'tour_seen', value: 'true' });
+            }
+        });
+    },
+    methods: {
+        startTour() {
+            this.driverObj.highlight({
+                element: '#rigTypeFilter',
+                popover: {
+                    title: 'Filtra per tipo di impianto',
+                    description: 'Seleziona il tipo di impianto che vuoi visualizzare sulla mappa.',
+                    position: 'top',
+                }
+            })
+        },  
     },
     setup(){
         
@@ -57,6 +83,7 @@ export default {
             this.toast.add({ severity: 'info', summary: 'Info', detail: 'Filtro '+ this.rigTypeStore.getType() +' impostato', life: 1000 });
             }
         }
+
     },
     emits: ["updatedVisibility"]
 }

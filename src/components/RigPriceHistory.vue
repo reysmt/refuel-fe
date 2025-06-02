@@ -1,9 +1,9 @@
 <template>
     <Drawer v-model:visible="isSidebarVisible" header="Storico" position="full">
-        <div class="card" v-if="!isLoading">
-             <Line :data="chartData" :options="chartOptions" style="width: 90%; height: 90%; margin: auto; align-items: center;"/>
+        <div class="card">
+             <Line :data="chartData" :options="chartOptions" style="width: 90%; height: 90%; margin: auto; align-items: center;" v-if="!isLoading"/>
+             <ProgressSpinner class="rig-price-history-spinner" v-if="isLoading"/>
         </div>
-        <ProgressSpinner class="rig-price-history-spinner" v-if="isLoading"/>
     </Drawer>
 </template>
 <script>
