@@ -31,7 +31,7 @@ export default {
             toast : null,
             driverObj: null,
             isTourSeen: false,
-            preference: null,
+            rigTypepreference: null,
         }
     },
     props: ["isVisible"],
@@ -40,6 +40,7 @@ export default {
         this.toast = useToast();
         this.driverObj = driver();
         this.isTourSeen = await Preferences.get({ key: 'tour_seen' });
+        this.rigTypepreference = await Preferences.get({ key: 'rig_type_preference' });
         if (this.isTourSeen.value === null || this.isTourSeen.value === 'false') {
             setTimeout(() => {
                 this.toast.add({ severity: 'info', summary: 'Info', detail: 'Seleziona il tipo di impianto che vuoi visualizzare sulla mappa.' });
@@ -47,8 +48,11 @@ export default {
             this.isFilterVisible = true;
             await Preferences.set({ key: 'tour_seen', value: 'true' });
         }
-        this.rigTypeStore.setType((await Preferences.get({ key: 'rig_type_preference' })).value === 'null' ? null : (await Preferences.get({ key: 'rig_type_preference' })).value);
-        this.rigType = this.rigTypeStore.getType();
+        setTimeout(() => {
+            this.rigTypeStore.setType(this.rigTypepreference.value === 'null' ? null : this.rigTypepreference.value);
+            this.rigType = this.rigTypeStore.getType();
+        }, 500);
+
     },
     methods: {
         startTour() {
@@ -83,7 +87,7 @@ export default {
             if(this.rigTypeStore.getType() == null){
                 this.toast.add({ severity: 'info', summary: 'Info', detail: 'Filtro rimosso', life: 1000 });
             }else{
-            this.toast.add({ severity: 'info', summary: 'Info', detail: 'Filtro '+ this.rigTypeStore.getType() +' impostato', life: 1000 });
+            this.toast.add({ severity: 'info', summary: 'Info', detail: 'Filtro '+ this.rigTypeStore.getType() +' impostato', life: 2000 });
             }
             await Preferences.set({ key: 'rig_type_preference', value: newVal });
             console.log(this.rigType)

@@ -164,7 +164,7 @@ export default {
             // console.log(this.rigPrices)
         },
         isVisible(newVal){
-            console.log("prop: ",newVal)
+            // console.log("prop: ",newVal)
             this.isSidebarVisible = newVal
         },
     },
