@@ -186,7 +186,7 @@ export default {
       });
 
       this.clusterSource = new Cluster({
-        distance: 25,
+        distance: 20,
         source: this.vectorSource,
       });
 
@@ -322,7 +322,7 @@ export default {
       let style = null;
       style = new Style({
         image: new Icon({
-          src: size == 1 ? new URL('@/assets/local_gas_stationx4-blue.jpg', import.meta.url).href : new URL('@/assets/local_gas_stationx4-darkblue.jpg', import.meta.url).href,
+          src: size == 1 ? new URL('@/assets/icons/local_gas_stationx4-blue.jpg', import.meta.url).href : new URL('@/assets/icons/local_gas_stationx4-darkblue.jpg', import.meta.url).href,
           scale: 0.4,
         }),
         text: new Text({
