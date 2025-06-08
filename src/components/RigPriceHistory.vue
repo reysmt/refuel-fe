@@ -90,7 +90,7 @@ export default {
                         label: rig.rigFuelType.rigFuelTypeDescription + " " + isSelfLabel,
                         data: [],
                         fill: false,
-                        borderColor: colors.get(rig.rigFuelType.rigFuelTypeDescription.toLowerCase()) || '#000000',
+                        borderColor: colors.rigTypesColor.get(rig.rigFuelType.rigFuelTypeDescription.toLowerCase()) || '#000000',
                         borderWidth: 2,
                         radius: 0,
                         tension: 0.4,

@@ -28,6 +28,7 @@ import Feature from 'ol/Feature.js';
 import { Cluster, Vector as VectorSource } from 'ol/source.js';
 import { Vector as VectorLayer } from 'ol/layer.js';
 import Point from 'ol/geom/Point.js';
+import colors from '@/assets/rigTypesColor';
 import {
   Fill,
   Style,
@@ -322,13 +323,13 @@ export default {
       let style = null;
       style = new Style({
         image: new Icon({
-          src: size == 1 ? new URL('@/assets/icons/local_gas_stationx4-blue.jpg', import.meta.url).href : new URL('@/assets/icons/local_gas_stationx4-darkblue.jpg', import.meta.url).href,
+          src: size == 1 ? this.getRigTypeIconColor() : new URL('@/assets/icons/local_gas_stationx4-darkblue.jpg', import.meta.url).href,
           scale: 0.4,
         }),
         text: new Text({
           text: text,
           fill: new Fill({
-            color: size == 1 ? '#3b82f6' : '#0055DF',
+            color: size == 1 ? this.getTextRigTypeColor() : '#3b82f6',
           }),
           scale: 1,
           offsetY: 9,
@@ -408,6 +409,19 @@ export default {
         if(this.interval  == null){
             this.interval = await this.retry();
         }
+    },
+    getRigTypeIconColor(){
+      if(this.rigsTypeStore.getType() == null) {
+        return new URL('/src/assets/icons/local_gas_stationx4-blue.jpg', import.meta.url).href;
+      }
+      let iconName = '/src/assets/icons/'+ colors.rigTypesIconColor.get(this.rigsTypeStore.getType().toLowerCase()) +'.jpg';
+      return new URL(iconName, import.meta.url).href;
+    },
+    getTextRigTypeColor() {
+      if(this.rigsTypeStore.getType() == null) {
+        return '#3b82f6'; // blue
+      }
+      return colors.rigTypesColor.get(this.rigsTypeStore.getType().toLowerCase()) || '#3b82f6'; // default blue
     },
     generateCloseGCPoints(lat, lon, distanceInMeters, numberPoints) {
       const raggioTerra = 6371000; // in metri
