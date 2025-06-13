@@ -323,13 +323,13 @@ export default {
       let style = null;
       style = new Style({
         image: new Icon({
-          src: size == 1 ? this.getRigTypeIconColor() : new URL('@/assets/icons/local_gas_stationx4-darkblue.jpg', import.meta.url).href,
+          src: size == 1 ? this.getRigTypeIconColor() : this.getRigTypeIconColorDouble(),
           scale: 0.4,
         }),
         text: new Text({
           text: text,
           fill: new Fill({
-            color: size == 1 ? this.getTextRigTypeColor() : '#3b82f6',
+            color: this.getTextRigTypeColor(),
           }),
           scale: 1,
           offsetY: 9,
@@ -415,6 +415,13 @@ export default {
         return new URL('/src/assets/icons/local_gas_stationx4-blue.jpg', import.meta.url).href;
       }
       let iconName = '/src/assets/icons/'+ colors.rigTypesIconColor.get(this.rigsTypeStore.getType().toLowerCase()) +'.jpg';
+      return new URL(iconName, import.meta.url).href;
+    },
+    getRigTypeIconColorDouble(){
+      if (this.rigsTypeStore.getType() == null) {
+        return new URL('/src/assets/icons/local_gas_stationx4-darkblue-double.jpg', import.meta.url).href;
+      }
+      let iconName = '/src/assets/icons/' + colors.rigTypesIconColor.get(this.rigsTypeStore.getType().toLowerCase()) + '-double.jpg';
       return new URL(iconName, import.meta.url).href;
     },
     getTextRigTypeColor() {

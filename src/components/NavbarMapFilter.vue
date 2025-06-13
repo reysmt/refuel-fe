@@ -48,8 +48,8 @@ export default {
             this.isFilterVisible = true;
             await Preferences.set({ key: 'tour_seen', value: 'true' });
         }
-
-        if (this.rigTypepreference.value != 'null') {
+        // console.log(this.rigTypepreference.value)
+        if (this.rigTypepreference.value !== 'null') {
             setTimeout(() => {
                 this.rigTypeStore.setType(this.rigTypepreference.value);
                 this.rigType = this.rigTypeStore.getType();
