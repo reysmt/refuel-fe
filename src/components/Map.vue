@@ -412,16 +412,20 @@ export default {
     },
     getRigTypeIconColor(){
       if(this.rigsTypeStore.getType() == null) {
-        return new URL('/src/assets/icons/local_gas_stationx4-blue.jpg', import.meta.url).href;
+        return new URL('/icons/local_gas_stationx4-blue.jpg', import.meta.url).href;
       }
-      let iconName = '/src/assets/icons/'+ colors.rigTypesIconColor.get(this.rigsTypeStore.getType().toLowerCase()) +'.jpg';
+      let iconName = '/icons/'+ colors.rigTypesIconColor.get(this.rigsTypeStore.getType().toLowerCase()) +'.jpg';
+      console.log(new URL(iconName, import.meta.url).href);
+      console.log(new URL('/icons/local_gas_stationx4-blue.jpg', import.meta.url).href);
       return new URL(iconName, import.meta.url).href;
     },
     getRigTypeIconColorDouble(){
       if (this.rigsTypeStore.getType() == null) {
-        return new URL('/src/assets/icons/local_gas_stationx4-darkblue-double.jpg', import.meta.url).href;
+        return new URL('/icons/local_gas_stationx4-darkblue-double.jpg', import.meta.url).href;
       }
-      let iconName = '/src/assets/icons/' + colors.rigTypesIconColor.get(this.rigsTypeStore.getType().toLowerCase()) + '-double.jpg';
+      let iconName = '/icons/' + colors.rigTypesIconColor.get(this.rigsTypeStore.getType().toLowerCase()) + '-double.jpg';
+      console.log(new URL(iconName, import.meta.url).href);
+      console.log(new URL('/icons/local_gas_stationx4-darkblue-double.jpg', import.meta.url).href);
       return new URL(iconName, import.meta.url).href;
     },
     getTextRigTypeColor() {
