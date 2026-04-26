@@ -1,0 +1,12 @@
+{
+  "include": ["src", "typings"],
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "compilerOptions": {
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "android", "ios", "assets", "other assets"]
+}

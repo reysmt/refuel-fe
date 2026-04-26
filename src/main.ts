@@ -7,30 +7,16 @@ import './assets/loading.css'
 import './assets/map.css'
 import './assets/primeVueCustom.css'
 import './assets/streetView.css'
-// import 'primevue/resources/themes/aura-light-green/theme.css'
-// import 'primevue/resources/themes/aura-light-indigo/theme.css'
-// import 'primevue/resources/themes/aura-light-purple/theme.css'
-// import 'primevue/resources/themes/aura-light-teal/theme.css';
-// import 'primevue/resources/themes/lara-light-blue/theme.css'
 import 'primeicons/primeicons.css'
 
-/* Core CSS required for Ionic components to work properly */
-// import '@ionic/vue/css/core.css';
-
-/* Basic CSS for apps built with Ionic */
-// import '@ionic/vue/css/normalize.css';
-// import '@ionic/vue/css/structure.css';
-// import '@ionic/vue/css/typography.css';
-
-import { createApp } from 'vue'
+import { createApp, type App as VueApp } from 'vue'
 import { createPinia } from 'pinia'
 import { IonicVue } from '@ionic/vue'
 import App from './App.vue'
 import router from './router'
-import PrimeVue from 'primevue/config';
+import PrimeVue, { type PrimeVueConfiguration } from 'primevue/config';
 import ToastService from 'primevue/toastservice';
 import Lara from '@primeuix/themes/lara';
-import { semantic } from '@primeuix/themes/lara/base'
 import { definePreset } from '@primeuix/themes';
 
 const MyPreset = definePreset(Lara, {
@@ -51,7 +37,7 @@ const MyPreset = definePreset(Lara, {
     }
 });
 
-const app = createApp(App)
+const app: VueApp<Element> = createApp(App)
 app.use(IonicVue)
 app.use(PrimeVue, {
     theme: {
@@ -60,9 +46,10 @@ app.use(PrimeVue, {
             darkModeSelector: false || 'none',
         }
     }
-});
+} as PrimeVueConfiguration);
 app.use(ToastService)
 app.use(createPinia())
 app.use(router)
 
 app.mount('#app')
+
