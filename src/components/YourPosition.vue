@@ -1,65 +1,63 @@
 <template>
-    <!-- <div id="popup" class="ol-popup" ref="popup">
-        <a href="#" id="popup-closer" @click="closePopup" class="ol-popup-closer" ref="popup-closer"
-            v-html="popupCloser"></a>
-        <div id="popupContent" ref="popupContent">
-            <p>You clicked here:</p><code>{{ popupContent }}</code>
-        </div>
-    </div> -->
-    <!-- <button type="button" class="btn btn-secondary btn-sm rounded" ref="popup"> -->
-        <i class="pi pi-map-marker" ref="popup" style="color: white;"></i>
-        
-    <!-- </button> -->
-    
+  <i ref="popupElement" class="pi pi-map-marker" style="color: white;"></i>
 </template>
-<script>
-// import { toStringHDMS } from 'ol/coordinate.js';
-import Overlay from 'ol/Overlay.js';
 
-import "ol/ol.css";
-export default {
-    data() {
-        return {
-            popup: null
-        }
-    },
-    mounted() {
-        this.setupOverlay();
-        this.preparePopup();
-    },
-    props: ['mapObj', 'popupContent', 'longitude', 'latitude'],
-    methods: {
-        preparePopup() {
-            let coordinates = { coordinate: [this.longitude, this.latitude] };
-            this.showPopup(coordinates)
-            // this.mapObj.getView().setZoom(this.mapObj.getView().getZoom() - 0.05)
-        },
-        showPopup(evt) {
-            // const coordinate = evt.coordinate;
-            // const hdms = toStringHDMS(coordinate);
+<script setup lang="ts">
+import { onMounted, ref, shallowRef, watch, type Ref } from 'vue'
+import Overlay from 'ol/Overlay.js'
+import type Map from 'ol/Map'
 
-            // this.convertOsmCoordinatesToGmCoordinates(coordinate)
-
-            // console.log("popupView: ",coordinate[1] + "," + coordinate[0])
-            // console.log("popupView: ",this.popupContent)
-            // this.popupContent = hdms;
-            this.popup.setPosition(evt.coordinate);
-        },
-        setupOverlay() {
-            this.popup = new Overlay({
-                element: this.$refs.popup,
-                autoPan: {
-                    animation: {
-                        duration: 250,
-                    },
-                },
-            });
-            this.popup.set("myPosition","true")
-            this.mapObj.addOverlay(this.popup)
-        },
-    }
+interface Props {
+  mapObj: Map
+  popupContent?: string | null
+  longitude: number
+  latitude: number
 }
+
+const props = defineProps<Props>()
+const popupElement = ref<HTMLElement | null>(null)
+const overlay = shallowRef<Overlay | null>(null)
+
+const getCoordinate = (): [number, number] => [props.longitude, props.latitude]
+
+const createOverlay = (): void => {
+  if (!props.mapObj || !popupElement.value) {
+    return
+  }
+
+  overlay.value = new Overlay({
+    element: popupElement.value,
+    autoPan: {
+      animation: {
+        duration: 250,
+      },
+    },
+  })
+
+  overlay.value.set('myPosition', 'true')
+  props.mapObj.addOverlay(overlay.value)
+}
+
+const updatePopupPosition = (): void => {
+  const position = getCoordinate()
+  if (overlay.value) {
+    overlay.value.setPosition(position)
+  }
+}
+
+onMounted(() => {
+  createOverlay()
+  updatePopupPosition()
+})
+
+watch(
+  () => [props.longitude, props.latitude],
+  () => {
+    updatePopupPosition()
+  },
+)
 </script>
+
 <style scoped>
 .ol-popup {
   position: absolute;
@@ -109,7 +107,7 @@ export default {
   content: "✖";
 }
 
-.position{
-    font-size: 20px;
+.position {
+  font-size: 20px;
 }
 </style>

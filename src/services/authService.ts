@@ -1,25 +1,22 @@
-import { axiosAuthInstance } from "./axiosService.js";
+import { axiosAuthInstance } from './axiosService'
 
-async function validate(token){
-    return await axiosAuthInstance().post('/validate', {
-        token : token
-    }).then(resp => resp.data)
+async function validate(token: string): Promise<any> {
+  return await axiosAuthInstance()
+    .post('/validate', { token })
+    .then((resp) => resp.data)
 }
 
-async function info(token){
-    return await axiosAuthInstance().post('/info', {
-        token : token
-    }).then(resp => resp.data)
+async function info(token: string): Promise<any> {
+  return await axiosAuthInstance()
+    .post('/info', { token })
+    .then((resp) => resp.data)
 }
 
-async function authenticate(username, password){
-    return await axiosAuthInstance().post('/authenticate',{
-        username : username,
-        password: password
-    }).then(resp => resp.data)
-    .catch(function(error){
-        return error;
-    })
+async function authenticate(username: string, password: string): Promise<any> {
+  return await axiosAuthInstance()
+    .post('/authenticate', { username, password })
+    .then((resp) => resp.data)
+    .catch((error) => error)
 }
 
-export{validate, authenticate, info}
+export { validate, authenticate, info }

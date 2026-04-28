@@ -3,7 +3,7 @@
  <div id="street-view" class="street-view" ref="streetView"></div>
 </template>
 <script setup>
-import googleMapService from '@/services/googleMapService';
+import { loadGoogleMaps } from '@/services/googleMapService';
 import { ref } from 'vue';
 </script>
 <script>
@@ -12,7 +12,7 @@ export default {
   mounted() {
     this.key = this.gmapKey;
     // console.log(this.key)
-    googleMapService.loadGoogleMaps(this.key).then(() => {
+    loadGoogleMaps(this.key).then(() => {
       this.initialize();
     });
   },

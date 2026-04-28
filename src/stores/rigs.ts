@@ -1,75 +1,107 @@
 import { defineStore } from 'pinia'
 
+export interface RigFuelType {
+  rigFuelTypeDescription: string
+}
+
+export interface RigPrice {
+  price: number
+  rigFuelType: RigFuelType
+  fuelDescription?: string
+  [key: string]: any
+}
+
+export interface RigItem {
+  rigId: string
+  latitude?: number
+  longitude?: number
+  [key: string]: any
+}
+
+export interface RigWrapper {
+  rig: RigItem
+  rigPrices: RigPrice[]
+  [key: string]: any
+}
+
+interface RigsState {
+  rigs: RigWrapper[]
+}
+
+interface RigsToShowState {
+  rigsToShow: RigWrapper[]
+}
+
+interface RigsTypeState {
+  type: string | null
+}
+
+interface AllRigsTypeState {
+  allTypes: string[]
+}
 
 export const useRigsStore = defineStore('rigs', {
-  state: () => {
-    return {
-      rigs : []
-    }
-  },
+  state: (): RigsState => ({
+    rigs: [],
+  }),
   actions: {
-    getRigs(){
-      return this.rigs;
+    getRigs(): RigWrapper[] {
+      return this.rigs
     },
-    setRigs(rigs){
-      this.rigs = rigs;
+    setRigs(rigs: RigWrapper[]): void {
+      this.rigs = rigs
     },
-    getLength(){
+    getLength(): number {
       return this.rigs.length
-    }
-  }
+    },
+  },
 })
 
 export const useRigsToShowStore = defineStore('rigsToShow', {
-  state: () => {
-    return {
-      rigsToShow : []
-    }
-  },
+  state: (): RigsToShowState => ({
+    rigsToShow: [],
+  }),
   actions: {
-    getRigs(){
-      return this.rigsToShow;
+    getRigs(): RigWrapper[] {
+      return this.rigsToShow
     },
-    setRigs(rigs){
-      this.rigsToShow = rigs;
+    setRigs(rigs: RigWrapper[]): void {
+      this.rigsToShow = rigs
     },
-    getLength(){
-      return this.rigsToShow.length;
-    }
-  }
+    getLength(): number {
+      return this.rigsToShow.length
+    },
+  },
 })
 
 export const useRigsTypeStore = defineStore('type', {
-  state: () => {
-    return {
-      type : null
-    }
-  },
+  state: (): RigsTypeState => ({
+    type: null,
+  }),
   actions: {
-    getType(){
-      return this.type;
+    getType(): string | null {
+      return this.type
     },
-    setType(type){
-      this.type = type;
-    }
-  }
+    setType(type: string | null): void {
+      this.type = type
+    },
+  },
 })
 
 export const useAllRigsTypeStore = defineStore('allType', {
-  state: () => {
-    return {
-      allTypes : []
-    }
-  },
+  state: (): AllRigsTypeState => ({
+    allTypes: [],
+  }),
   actions: {
-    getAllRigsType(){
-      this.allTypes.sort();
-      return this.allTypes;
+    getAllRigsType(): string[] {
+      return [...this.allTypes].sort((a, b) => a.localeCompare(b))
     },
-    addAllRigsType(type){
-      // this.allTypes.push(type);
-      this.allTypes.findIndex(item => item.toLowerCase() === type.toLowerCase()) === -1 ? this.allTypes.push(type) : null
-    }
-  }
+    addAllRigsType(type: string): void {
+      const normalized = type.trim().toLowerCase()
+      if (!this.allTypes.some((item) => item.toLowerCase() === normalized)) {
+        this.allTypes.push(type)
+      }
+    },
+  },
 })
 

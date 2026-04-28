@@ -1,56 +1,67 @@
-import axios from 'axios' // browser
+import axios, { type AxiosInstance, type AxiosResponse } from 'axios'
 
-function axiosRigsInstance(token) {
-  const rigsInstance = axios.create({
+function axiosRigsInstance(token?: string): AxiosInstance {
+  const headers: Record<string, string> = {
+    'X-Custom-Header': 'Les-Header',
+    'Content-Type': 'application/json'
+  }
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`
+  }
+
+  return axios.create({
     baseURL: 'https://refuelapi.com:8443/api/rig/',
     timeout: 60000,
-    headers: {
-      'X-Custom-Header': 'Les-Header',
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + token
-    }
+    headers
   })
-  return rigsInstance
 }
 
-function axiosAuthInstance() {
+function axiosAuthInstance(): AxiosInstance {
   return axios.create({
     baseURL: 'https://refuelapi.com:8443/api/auth/',
     timeout: 60000,
-    headers: { 'X-Custom-Header': 'Les-Header', 'Content-Type': 'application/json' }
-  })
-}
-
-function axiosGmapInstance(token) {
-  return axios.create({
-    baseURL: 'https://refuelapi.com:8443/api/gmap/',
-    timeout: 60000,
     headers: {
       'X-Custom-Header': 'Les-Header',
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + token
+      'Content-Type': 'application/json'
     }
   })
 }
 
-function axiosGmapTileReqCheck(session, key) {
+function axiosGmapInstance(token?: string): AxiosInstance {
+  const headers: Record<string, string> = {
+    'X-Custom-Header': 'Les-Header',
+    'Content-Type': 'application/json'
+  }
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`
+  }
+
   return axios.create({
-    baseURL: 'https://tile.googleapis.com/v1/2dtiles/0/0/0?session=' + session + '&key=' + key,
+    baseURL: 'https://refuelapi.com:8443/api/gmap/',
+    timeout: 60000,
+    headers
+  })
+}
+
+function axiosGmapTileReqCheck(session: string, key: string): AxiosInstance {
+  return axios.create({
+    baseURL: `https://tile.googleapis.com/v1/2dtiles/0/0/0?session=${session}&key=${key}`,
     timeout: 60000
   })
 }
 
-function axiosGetGeoIp() {
+function axiosGetGeoIp(): Promise<AxiosResponse<any>> {
   return axios.get('https://geolocation-db.com/json/')
 }
 
-function axiosGmapReverseGeocoding(lat, lng, key) {
+function axiosGmapReverseGeocoding(lat: number, lng: number, key: string): AxiosInstance {
   return axios.create({
-    baseURL: 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + lat + ',' + lng + '&key=' + key,
+    baseURL: `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${key}`,
     timeout: 60000
   })
 }
-
 
 export {
   axiosRigsInstance,

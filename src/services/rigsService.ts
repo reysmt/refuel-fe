@@ -1,55 +1,66 @@
-// import axios from "axios";
-import { axiosRigsInstance } from "./axiosService.js";
+import { axiosRigsInstance } from './axiosService'
 
-
-
-async function getAllRigPrices(){
-    return await axiosRigsInstance().get('/prices').then(resp => resp.data);
+async function getAllRigPrices(): Promise<any> {
+  return await axiosRigsInstance().get('/prices').then((resp) => resp.data)
 }
 
-async function getAllRigs(){
-    const resp = await axiosRigsInstance().get('/rigs').then(resp => resp.data);
-    return resp;
+async function getAllRigs(): Promise<any> {
+  return await axiosRigsInstance().get('/rigs').then((resp) => resp.data)
 }
 
-async function getNearbyRigsCsv(latitude, longitude, distanceThreshold){
-    return await axiosRigsInstance().post('/check',{
-        latitude: latitude,
-        longitude: longitude,
-        distanceThreshold: distanceThreshold
-    }).then(resp => resp.data);
+async function getNearbyRigsCsv(
+  latitude: number,
+  longitude: number,
+  distanceThreshold: number
+): Promise<any> {
+  return await axiosRigsInstance().post('/check', {
+    latitude,
+    longitude,
+    distanceThreshold
+  }).then((resp) => resp.data)
 }
 
-async function getNearbyRigs(latitude, longitude, distanceThreshold, token) {
+async function getNearbyRigs(
+  latitude: number,
+  longitude: number,
+  distanceThreshold: number,
+  token: string
+): Promise<any> {
   return await axiosRigsInstance(token)
-    .post(
-      '/service/check',
-      {
-        latitude: latitude,
-        longitude: longitude,
-        distanceThreshold: distanceThreshold
-      }
-    )
-    .then((resp) => resp.data)
-    .catch(function(error){
-        return error;
+    .post('/service/check', {
+      latitude,
+      longitude,
+      distanceThreshold
     })
+    .then((resp) => resp.data)
+    .catch((error) => error)
 }
 
-async function getFilteredRigs(rigsToShow, type){
-    return await axiosRigsInstance().post('/filter',{
-        rigsToShow: rigsToShow,
-        type: type
-    }).then(resp => resp.data);
+async function getFilteredRigs(rigsToShow: unknown[], type: string): Promise<any> {
+  return await axiosRigsInstance()
+    .post('/filter', {
+      rigsToShow,
+      type
+    })
+    .then((resp) => resp.data)
 }
 
-async function getRigPriceHistoryByRigId(rigId, token){
-    return await axiosRigsInstance(token).get(`/service/history/${rigId}`).then(resp => resp.data);
+async function getRigPriceHistoryByRigId(rigId: string, token: string): Promise<any> {
+  return await axiosRigsInstance(token)
+    .get(`/service/history/${rigId}`)
+    .then((resp) => resp.data)
 }
 
-async function checkReachability(){
-    return await axiosRigsInstance().get('/test')
+async function checkReachability(): Promise<any> {
+  return await axiosRigsInstance().get('/test')
 }
 
-
-export{getAllRigPrices, getAllRigs, getNearbyRigs, getFilteredRigs, checkReachability, getNearbyRigsCsv, getRigPriceHistoryByRigId}
+export {
+  getAllRigPrices,
+  getAllRigs,
+  getNearbyRigs,
+  getFilteredRigs,
+  checkReachability,
+  getNearbyRigsCsv,
+  getRigPriceHistoryByRigId
+}
