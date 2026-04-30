@@ -32,8 +32,8 @@ import { SplashScreen } from '@capacitor/splash-screen'
 import Toast from 'primevue/toast'
 import Skeleton from 'primevue/skeleton'
 import { useToast } from 'primevue/usetoast'
-import RigMap from '@/components/Map.vue'
-import NavbarMap from '@/components/NavbarMap.vue'
+import RigMap from '@/components/map/Map.vue'
+import NavbarMap from '@/components/navbar/NavbarMap.vue'
 
 interface GeoIpResult {
   message?: string

@@ -39,18 +39,18 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import RigDetail from '@/components/RigDetail.vue'
+import RigDetail from '@/components/detail/RigDetail.vue'
 import { useRigsTypeStore } from '@/stores/rigs'
 import { useMapStore } from '@/stores/googleMap'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import type { RigPrice, RigWrapper } from '@/stores/rigs'
+import type { RigPrice, RigWrapper } from '@/interfaces/rig'
 import 'ol/ol.css'
 
 interface Props {
   popupContent: RigWrapper[] | null
-  gmapKey?: string
-  token?: string
+  gmapKey: string
+  token: string
 }
 
 const props = defineProps<Props>()

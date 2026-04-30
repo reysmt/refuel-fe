@@ -5,10 +5,10 @@
 <script setup lang="ts">
 import { onMounted, ref, shallowRef, watch, type Ref } from 'vue'
 import Overlay from 'ol/Overlay.js'
-import type Map from 'ol/Map'
+import type { OlMapLike } from '@/interfaces/OlMapLike'
 
 interface Props {
-  mapObj: Map
+  mapObj: OlMapLike
   popupContent?: string | null
   longitude: number
   latitude: number
@@ -57,57 +57,3 @@ watch(
   },
 )
 </script>
-
-<style scoped>
-.ol-popup {
-  position: absolute;
-  background-color: white;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  padding: 15px;
-  border-radius: 10px;
-  border: 1px solid #cccccc;
-  bottom: 12px;
-  left: -50px;
-  min-width: 280px;
-}
-
-.ol-popup:after,
-.ol-popup:before {
-  top: 100%;
-  border: solid transparent;
-  content: " ";
-  height: 0;
-  width: 0;
-  position: absolute;
-  pointer-events: none;
-}
-
-.ol-popup:after {
-  border-top-color: white;
-  border-width: 10px;
-  left: 48px;
-  margin-left: -10px;
-}
-
-.ol-popup:before {
-  border-top-color: #cccccc;
-  border-width: 11px;
-  left: 48px;
-  margin-left: -11px;
-}
-
-.ol-popup-closer {
-  text-decoration: none;
-  position: absolute;
-  top: 2px;
-  right: 8px;
-}
-
-.ol-popup-closer:after {
-  content: "✖";
-}
-
-.position {
-  font-size: 20px;
-}
-</style>

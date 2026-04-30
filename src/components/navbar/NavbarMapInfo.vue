@@ -10,33 +10,27 @@
     <img src="/src/assets/kit-logo-iodl/logo_iodl_esteso.png" alt="IODL 2.0" style="width: 30%; height: 30%;">
 </DialogPv>
 </template>
-<script setup>
-import DialogPv from 'primevue/dialog';
-</script>
-<script>
-export default {
-    components: {
-        DialogPv
-    },
-    data() {
-        return {
-            isDialogVisible: this.visible,
-            version: import.meta.env.VITE_APP_VERSION
-        }
-    },
-    mounted(){
 
-    },
-    props: ['isVisible'],
-    emits: ['updatedVisibility'],
-    watch: {
-        isVisible(newVal) {
-            this.isDialogVisible = newVal;
-        },
-        isDialogVisible(newVal) {
-            this.$emit('updatedVisibility', newVal);
-            this.isDialogVisible = newVal;
-        }
-    }
-}
+<script setup lang="ts">
+import { ref, watch } from 'vue';
+import DialogPv from 'primevue/dialog';
+
+const props = defineProps<{ isVisible: boolean }>();
+const emit = defineEmits<{
+  (event: 'updatedVisibility', value: boolean): void;
+}>();
+
+const isDialogVisible = ref(props.isVisible);
+const version = import.meta.env.VITE_APP_VERSION as string;
+
+watch(
+  () => props.isVisible,
+  (newValue) => {
+    isDialogVisible.value = newValue;
+  }
+);
+
+watch(isDialogVisible, (newValue) => {
+  emit('updatedVisibility', newValue);
+});
 </script>

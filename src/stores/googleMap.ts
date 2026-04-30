@@ -5,23 +5,15 @@ import TileLayer from 'ol/layer/Tile.js'
 import View from 'ol/View.js'
 import { useGeographic } from 'ol/proj.js'
 import { XYZ } from 'ol/source'
-import type VectorLayer from 'ol/layer/Vector'
+import type { OlMapLike } from '@/interfaces/olmaplike'
 
 type MapTarget = string | HTMLElement | undefined
 
-interface OlMapLike {
-  getLayers(): any
-  addLayer(layer: VectorLayer): void
-  removeLayer(layer: VectorLayer): void
-  getView(): any
-  [key: string]: any
-}
-
 export const useMapStore = defineStore('map', () => {
-  const map = ref<OlMapLike | null>(null)
+  const map = ref<OlMapLike>()
 
-  function getMap(): OlMapLike | null {
-    return map.value
+  function getMap(): OlMapLike {
+    return map.value as OlMapLike
   }
 
   async function initMap(target: MapTarget, session: string, key: string): Promise<void> {
@@ -43,7 +35,7 @@ export const useMapStore = defineStore('map', () => {
           center: [0, 0],
           zoom: 1,
         }),
-      }) as OlMapLike
+      })
       return
     }
 

@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from '@ionic/vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import GasStationsView from '../views/GasStationsView.vue'
 import TestPageView from '../views/TestPageView.vue'
-import MobileGasStationsView from '../views/MobileGasStationsView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -19,11 +18,6 @@ const routes: Array<RouteRecordRaw> = [
     path: '/stations',
     name: 'stations',
     component: GasStationsView
-  },
-  {
-    path: '/mobile-stations',
-    name: 'mobile-stations',
-    component: MobileGasStationsView
   }
 ]
 

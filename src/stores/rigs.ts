@@ -1,44 +1,6 @@
 import { defineStore } from 'pinia'
 
-export interface RigFuelType {
-  rigFuelTypeDescription: string
-}
-
-export interface RigPrice {
-  price: number
-  rigFuelType: RigFuelType
-  fuelDescription?: string
-  [key: string]: any
-}
-
-export interface RigItem {
-  rigId: string
-  latitude?: number
-  longitude?: number
-  [key: string]: any
-}
-
-export interface RigWrapper {
-  rig: RigItem
-  rigPrices: RigPrice[]
-  [key: string]: any
-}
-
-interface RigsState {
-  rigs: RigWrapper[]
-}
-
-interface RigsToShowState {
-  rigsToShow: RigWrapper[]
-}
-
-interface RigsTypeState {
-  type: string | null
-}
-
-interface AllRigsTypeState {
-  allTypes: string[]
-}
+import type { RigWrapper, RigsState, RigsToShowState, RigsTypeState, AllRigsTypeState } from '@/interfaces/rig'
 
 export const useRigsStore = defineStore('rigs', {
   state: (): RigsState => ({

@@ -10,12 +10,12 @@
   </div>
 
   <img
-    src="../../google_logo/google_logo/android/res/drawable-xxxhdpi/google_on_non_white.png"
+    src="../../../google_logo/google_logo/android/res/drawable-xxxhdpi/google_on_non_white.png"
     class="google-logo"
   />
 
   <YourPosition
-    v-if="mapStore.getMap() != null && isMapLoaded"
+    v-if="mapStore.getMap() && isMapLoaded"
     :popupContent="'blank'"
     :latitude="props.latitude"
     :longitude="props.longitude"
@@ -40,9 +40,10 @@ import { ref, watch, onMounted, type ComponentPublicInstance, type Ref } from 'v
 import { Network } from '@capacitor/network'
 import YourPosition from './YourPosition.vue'
 import proj4 from 'proj4'
-import { getNearbyRigs } from '../services/rigsService'
+import { getNearbyRigs } from '../../services/rigsService'
 import { authenticate } from '@/services/authService'
-import { useRigsStore, useRigsToShowStore, useAllRigsTypeStore, useRigsTypeStore, type RigItem, type RigWrapper } from '@/stores/rigs'
+import { useRigsStore, useRigsToShowStore, useAllRigsTypeStore, useRigsTypeStore } from '@/stores/rigs'
+import type { RigItem, RigWrapper } from '@/interfaces/rig'
 import { useMapStore } from '@/stores/googleMap.js'
 import { getLastValidSession, getReverseGeocoding } from '@/services/googleMapService'
 import Feature from 'ol/Feature.js'

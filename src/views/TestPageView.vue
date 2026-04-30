@@ -4,7 +4,7 @@ import Button from 'primevue/button';
 import { Swiper, SwiperSlide} from 'swiper/vue';
 import ProgressSpinner from 'primevue/progressspinner';
 import Skeleton from 'primevue/skeleton';
-import StreetView from '@/components/StreetView.vue';
+import StreetView from '@/components/detail/StreetView.vue';
 import OverlayPanel from 'primevue/overlaypanel';
 import { ref } from 'vue';
 </script>
