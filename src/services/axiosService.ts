@@ -11,7 +11,7 @@ function axiosRigsInstance(token?: string): AxiosInstance {
   }
 
   return axios.create({
-    baseURL: 'https://refuelapi.com:8443/api/rig/',
+    baseURL: `${import.meta.env.VITE_BACKEND_URL}/api/rig/`,
     timeout: 60000,
     headers
   })
@@ -19,7 +19,7 @@ function axiosRigsInstance(token?: string): AxiosInstance {
 
 function axiosAuthInstance(): AxiosInstance {
   return axios.create({
-    baseURL: 'https://refuelapi.com:8443/api/auth/',
+    baseURL: `${import.meta.env.VITE_BACKEND_URL}/api/auth/`,
     timeout: 60000,
     headers: {
       'X-Custom-Header': 'Les-Header',
@@ -39,7 +39,7 @@ function axiosGmapInstance(token?: string): AxiosInstance {
   }
 
   return axios.create({
-    baseURL: 'https://refuelapi.com:8443/api/gmap/',
+    baseURL: `${import.meta.env.VITE_BACKEND_URL}/api/gmap/`,
     timeout: 60000,
     headers
   })

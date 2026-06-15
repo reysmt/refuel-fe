@@ -232,6 +232,23 @@ const convertOsmCoordinatesToGmCoordinates = (coordinates: [number, number]): [n
   return [convertedCoords!.y, convertedCoords!.x]
 }
 
+const debounce = <F extends (...args: any[]) => void>(fn: F, wait = 300) => {
+  let timeout: number | null = null
+  return (...args: Parameters<F>): void => {
+    if (timeout !== null) {
+      window.clearTimeout(timeout)
+    }
+    timeout = window.setTimeout(() => {
+      fn(...args)
+      timeout = null
+    }, wait)
+  }
+}
+
+const debouncedReloadOverlaysRigs = debounce(async () => {
+  await reloadOverlaysRigs()
+}, 1000)
+
 const dragMap = (): void => {
   const map = mapStore.getMap()
   if (!map) {
@@ -239,7 +256,7 @@ const dragMap = (): void => {
   }
   map.on('pointerdrag', () => {})
   map.on('movestart', () => {})
-  map.on('moveend', reloadOverlaysRigs)
+  map.on('moveend', debouncedReloadOverlaysRigs)
 }
 
 const recalculateRigs = async (): Promise<void> => {
